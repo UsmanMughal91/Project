@@ -82,7 +82,7 @@ const ParlorList = ({ navigation }) => {
 
 
         <View style={styles.container}>
-            <Text>Github</Text>
+           
 
             <ImageBackground source={require('../../assests/images/beauty.jpg')}
                 style={{ width: "100%", height: 250 }}>
