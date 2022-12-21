@@ -12,11 +12,13 @@ import BtnComp from '../../Components/BtnComp';
 import { toastConfig } from '../../Styles/styles';
 import Toast from 'react-native-toast-message';
 // create a component
-const Login = ({ navigation }) => {
+const LoginExpert = ({ navigation }) => {
 
     const [email, setemail] = useState(" ")
     const [password, setpassword] = useState(" ")
     const [data, setdata] = useState("")
+    const [show, setshow] = useState(false)
+    const [visible, setvisible] = useState(true)
 
     const clearTextInput = async () => {
         setemail('')
@@ -39,7 +41,7 @@ const Login = ({ navigation }) => {
                         }
                     )
                 }
-                await fetch('http://192.168.3.7:8000/api/Expert/login', option)
+                await fetch('http://192.168.214.7:8000/api/Expert/login', option)
                     .then(res => res.json())
                     .then(d => setdata(d))
                     .catch(err => console.log(err))
@@ -47,15 +49,15 @@ const Login = ({ navigation }) => {
                 if (data.status === "success") {
                     await clearTextInput()
                     navigation.navigate("BeautyExpertTabs")
-                } else {
-
+                }
+                else (data.status === "failed")
+                {
                     Toast.show({
                         type: 'warning',
                         position: 'top',
                         topOffset: 0,
                         text1: data.message
                     })
-
                 }
             } catch (error) {
                 console.log(error)
@@ -90,9 +92,15 @@ const Login = ({ navigation }) => {
                 />
                 <InputText Icon={<MaterialCommunityIcons name="lock" size={25} />}
                     placeholder={'Password'}
-                    secureTextEntry={true}
+                    secureTextEntry={visible}
                     onChangeText={setpassword}
-                    Icons={<MaterialIcons name="visibility-off" size={25} />}
+                    Icons={<MaterialCommunityIcons name={show === false ? "eye-off-outline" : "eye-outline"} size={25}
+                        onPress={
+                            () => {
+                                setvisible(!visible)
+                                setshow(!show)
+
+                            }} />}
                 />
                 <View style={{ alignItems: "flex-end", paddingTop: 10 }}>
                     <TouchableOpacity>
@@ -129,4 +137,4 @@ const styles = StyleSheet.create({
 
 
 //make this component available to the app
-export default Login;
+export default LoginExpert;

@@ -8,7 +8,7 @@ import InputText from '../../Components/InputText';
 import { toastConfig } from '../../Styles/styles';
 import Toast from 'react-native-toast-message';
 // create a component
-const forgotPass = () => {
+const ForgotPass = () => {
 
     const [email, setemail] = useState(" ")
     const [data, setdata] = useState("")
@@ -33,7 +33,7 @@ const forgotPass = () => {
                         }
                     )
                 }
-                await fetch('http://192.168.35.7:8000/api/user/send-user-password-reset-email', option)
+                await fetch('http://192.168.50.7:8000/api/user/send-user-password-reset-email', option)
                     .then(res => res.json())
                     .then(d => setdata(d))
                     .catch(err => console.log(err))
@@ -103,4 +103,4 @@ const styles = StyleSheet.create({
 });
 
 //make this component available to the app
-export default forgotPass;
+export default ForgotPass;

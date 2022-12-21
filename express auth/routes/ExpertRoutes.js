@@ -5,7 +5,7 @@ import checkUserAuth from '../middlewares/auth_middleware.js';
 
 
 // route level middleware - to protect route
-router.use('/changUserPassword', checkUserAuth)
+// router.use('/changUserPassword', checkUserAuth)
 router.use('/loggedUser', checkUserAuth)
 
 //public routes
@@ -17,5 +17,6 @@ router.post('/reset-password/:id/:token', ExpertController.userPasswordReset)
 
 router.post('/changUserPassword', ExpertController.changeUserPassword)
 router.get('/loggedUser', ExpertController.loggedUser)
+router.get('/getlist', ExpertController.getlist)
 
 export default router

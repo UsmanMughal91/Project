@@ -19,7 +19,7 @@ const ViewScreen = ({ navigation }) => {
                             <BtnComp btnText={"Guest"} onPress={()=>navigation.navigate("GuestStack")} />
                         </View>
                         <View style={{ width: "40%" }} >
-                            <BtnComp btnText={"Register"} onPress={() => navigation.navigate("registerOption")} />
+                            <BtnComp btnText={"Register"} onPress={() => navigation.navigate("RegisterOption")} />
                        </View>
                     </View>
                     </View>

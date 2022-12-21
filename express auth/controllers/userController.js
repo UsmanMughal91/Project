@@ -42,6 +42,7 @@ class userController {
     static userLogin = async (req, res) => {
         try {
             const { email, password } = req.body
+            console.log(req.body)
             if (email && password) {
                 // console.log(req.body)
                 const user = await UserModel.findOne({ email: email })
@@ -67,23 +68,19 @@ class userController {
     }
 
     static changeUserPassword = async (req, res) => {
-        console.log(req.body)
-        const { password, password_confirmation } = req.body
-        console.log(req.body)
+        const { token, password, password_confirmation } = req.body
+        var data = JSON.parse(atob(token.split('.')[1]));
         if (password && password_confirmation) {
             if (password !== password_confirmation) {
-                res.send({ "status": "failed", "message": "New Password and Confirm New Password doesn't match" })
+                res.send({ "status": "failed", "message": "New Password and Confirm Password doesn't match" })
             } else {
                 const salt = await bcrypt.genSalt(10)
                 const newHashPassword = await bcrypt.hash(password, salt)
-                await UserModel.findByIdAndUpdate(req.user._id, { $set: { password: newHashPassword } })
-                res.send({ "status": "success", "message": "Password changed succesfully" })
-            }
-        } else {
-            res.send({ "status": "failed", "message": "All Fields are Required" })
+                await UserModel.findByIdAndUpdate(data.userID, { $set: { password: newHashPassword } })
+                res.send({ "status": "success", "message": "Password has been changed" })
+                
+            }}
         }
-    }
-
     static loggedUser = async (req, res) => {
         res.send({ "user": req.user })
     }
@@ -102,7 +99,7 @@ class userController {
                 let info = await transporter.sendMail({
                   from: process.env.EMAIL_FROM,
                   to: user.email,
-                  subject: "GeekShop - Password Reset Link",
+                  subject: "GetBeauty - Password Reset Link",
                   html: `<a href=${link}>Click Here</a> to Reset Your Password`
                 })
                 res.send({ "status": "success", "message": "Password Reset Email Sent... Please Check Your Email" })
@@ -138,6 +135,7 @@ class userController {
             res.send({ "status": "failed", "message": "Invalid Token" })
         }
     }
+    
 }
 
 export default userController

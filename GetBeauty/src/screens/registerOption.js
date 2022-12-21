@@ -4,7 +4,7 @@ import { View, Text, StyleSheet,ImageBackground } from 'react-native';
 import BtnComp from '../Components/BtnComp';
 
 // create a component
-const registerOption = ({navigation}) => {
+const RegisterOption = ({navigation}) => {
     return (
         <View style={{ flex: 1 }}>
             <ImageBackground source={require('../assests/images/bg2.jpg')}
@@ -50,4 +50,4 @@ const styles = StyleSheet.create({
 });
 
 //make this component available to the app
-export default registerOption;
+export default RegisterOption;

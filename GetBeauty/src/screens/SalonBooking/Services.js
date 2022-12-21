@@ -69,7 +69,7 @@ const Services = ({navigation}) => {
                     data={Data}
                     keyExtractor={Data => Data.id.toString()}
                     renderItem={({ item }) => (
-                        <TouchableOpacity activeOpacity={0.6} onPress={()=>navigation.navigate('serviceDetail')}>
+                        <TouchableOpacity activeOpacity={0.6} onPress={()=>navigation.navigate('ServiceDetail')}>
                         <View style={{ flex: 1 }}>
                             <View style={{ flexDirection: 'row', marginBottom: 10, alignItems: 'center', backgroundColor: 'white', borderRadius: 12, height: 80}}>
                                 <View>

@@ -1,5 +1,5 @@
 //import liraries
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Button, ImageBackground, TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import BtnComp from '../../Components/BtnComp';
@@ -13,6 +13,21 @@ import Heading from '../../Components/Heading';
 // create a component
 
 const ParlorList = ({ navigation }) => {
+    const [data, setdata] = useState()
+    const getlist = async () => {
+        try {
+            await fetch('http://192.168.214.7:8000/api/Expert/getlist')
+                .then(res => res.json())
+                .then(d => { setdata(d.data) })
+                .catch(err => console.log(err))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    useEffect(() => {
+        getlist()
+        console.log(data)
+    }, [])
     const DATA = [
         {
             id: 1,
@@ -63,10 +78,6 @@ const ParlorList = ({ navigation }) => {
             images: require('../../assests/images/d.jpg'),
         }
     ]
-
-
-
-
     return (
 
 
@@ -95,29 +106,26 @@ const ParlorList = ({ navigation }) => {
                         </View>
                     </View>
                 </View>
-
-
             </ImageBackground>
-            <ScrollView style={{margin:20}}>
+            {data && <ScrollView style={{ margin: 20 }}>
                 <Text style={{ fontSize: 30, color: "black", fontWeight: "600" }}>Choose Parlour</Text>
 
                 <FlatList
-
-                    data={DATA}
-                    keyExtractor={DATA => DATA.id.toString()}
+                    data={data}
+                    keyExtractor={data => data._id}
                     renderItem={({ item }) => (
                         <View style={{ flex: 1, }}>
-                            <TouchableOpacity onPress={()=>navigation.navigate('seeProfile')}>
+                            <TouchableOpacity onPress={() => navigation.navigate('SeeProfile')}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 15, marginBottom: 15 }}>
                                     <View>
-                                        <Image source={item.images}
+                                        <Image source={item.pic}
                                             style={{ borderRadius: 40, width: 50, height: 50 }}
                                         />
                                     </View>
 
                                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
                                         <View style={{ marginLeft: 10, width: "69%" }}>
-                                            <Text style={{ color: 'black', fontSize: 20 }}>{item.PName}</Text>
+                                            <Text style={{ color: 'black', fontSize: 20 }}>{item.parlourName}</Text>
                                             <Text>{item.name}</Text>
                                         </View>
 
@@ -130,8 +138,9 @@ const ParlorList = ({ navigation }) => {
                             </TouchableOpacity>
                         </View>
 
+
                     )} />
-            </ScrollView>
+            </ScrollView>}
 
         </View>
 
@@ -142,7 +151,7 @@ const ParlorList = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        
+
 
     },
     Item: {

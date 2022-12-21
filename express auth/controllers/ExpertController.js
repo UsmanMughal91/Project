@@ -7,12 +7,13 @@ import ExpertModel from '../models/Expert.js'
 class ExpertController {
     static userRegistration = async (req, res) => {
         // console.log(req.body)
-        const { name, email, password, password_confirmation } = req.body
+        const { name, email, password, password_confirmation, parlourName, phone, address ,pic} = req.body
+        console.log(req.body)
         const user = await ExpertModel.findOne({ email: email })
         if (user) {
             res.send({ "status": "failed", "message": "Email already exists" })
         } else {
-            if (name && email && password && password_confirmation) {
+            if (name && email && password && password_confirmation && parlourName && phone && address && pic) {
                 if (password === password_confirmation) {
                     try {
                         const salt = await bcrypt.genSalt(10)
@@ -21,6 +22,10 @@ class ExpertController {
                             name: name,
                             email: email,
                             password: hashPassword,
+                            phone:phone,
+                            parlourName:parlourName,
+                            address:address,
+                            pic:pic
 
                         })
                         await doc.save()
@@ -70,18 +75,20 @@ class ExpertController {
     }
 
     static changeUserPassword = async (req, res) => {
-        const { password, password_confirmation } = req.body
+     
+        const { token, password, password_confirmation } = req.body
+        console.log(req.body)
+        var data = JSON.parse(atob(token.split('.')[1]));
         if (password && password_confirmation) {
             if (password !== password_confirmation) {
-                res.send({ "status": "failed", "message": "New Password and Confirm New Password doesn't match" })
+                res.send({ "status": "failed", "message": "Password and Confirm Password doesn't match" })
             } else {
                 const salt = await bcrypt.genSalt(10)
                 const newHashPassword = await bcrypt.hash(password, salt)
-                await ExpertModel.findByIdAndUpdate(req.user._id, { $set: { password: newHashPassword } })
-                res.send({ "status": "success", "message": "Password changed succesfully" })
+                await ExpertModel.findByIdAndUpdate(data.userID, { $set: { password: newHashPassword } })
+                res.send({ "status": "success", "message": "Password has been changed" })
+
             }
-        } else {
-            res.send({ "status": "failed", "message": "All Fields are Required" })
         }
     }
 
@@ -136,6 +143,26 @@ class ExpertController {
         } catch (error) {
             console.log(error)
             res.send({ "status": "failed", "message": "Invalid Token" })
+        }
+    }
+    static getlist = async (req, res) => {
+        console.log('req made')
+
+        try {
+            ExpertModel.find({}, function (err, result) {
+                if (err) {
+                    res
+                        .status(200)
+                        .json({ 'status': 'success', "message": err.message });
+                } else {
+                    res
+                        .status(200)
+                        .json({ 'status': 'success', "data": result });
+                }
+            });
+        } catch (error) {
+            console.log(error)
+            res.send({ "status": "failed", "message": "failed to get list" })
         }
     }
 }

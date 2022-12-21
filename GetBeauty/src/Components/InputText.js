@@ -22,12 +22,15 @@ const InputText = ({
                 <View>
                     {Icon}
                 </View>
-                <TextInput placeholder={placeholder} style={{ flex: 1, paddingLeft: 10, fontSize: 20 }}
-                    onChangeText={onChangeText}
-                    secureTextEntry={secureTextEntry}
-                    keyboardType={keyboardType}
-                    onPress={onPress} 
-                />
+              
+                    <TextInput placeholder={placeholder} style={{ flex: 1, paddingLeft: 10, fontSize: 20, }}
+                        onChangeText={onChangeText}
+                        secureTextEntry={secureTextEntry}
+                        keyboardType={keyboardType}
+                        onPress={onPress}
+                    />
+             
+              
                 <View>
                     <TouchableOpacity onPress={onPress}>
                         {Icons}
@@ -51,7 +54,10 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         paddingLeft: 10,
         paddingRight:10,
-        marginTop: 20
+        marginTop: 20,
+        flexWrap:'wrap',
+        width:"100%",
+        
     },
 });
 

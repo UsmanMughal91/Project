@@ -6,7 +6,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import BtnComp from '../../Components/BtnComp';
 import Heading from '../../Components/Heading';
 // create a component
-const seeProfile =({navigation})=>  {
+const SeeProfile =({navigation})=>  {
     
         return (
             <ScrollView style={styles.container}>
@@ -53,4 +53,4 @@ const styles = StyleSheet.create({
 });
 
 //make this component available to the app
-export default seeProfile;
+export default SeeProfile;

@@ -43,7 +43,7 @@ const Login = ({ navigation }) => {
                       }
                   )
               }
-              await fetch('http://192.168.74.7:8000/api/user/login', option)
+              await fetch('http://192.168.214.7:8000/api/user/login', option)
                   .then(res => res.json())
                   .then(d => setdata(d))
                   .catch(err => console.log(err))
@@ -52,8 +52,9 @@ const Login = ({ navigation }) => {
                   await storeToken(data.token)  // store token in storage 
                   await clearTextInput()
                   navigation.navigate("SalonAppTabs")
-              } else {
-
+              } 
+              else(data.status === "failed")
+              {
                   Toast.show({
                       type: 'warning',
                       position: 'top',
@@ -79,8 +80,9 @@ const Login = ({ navigation }) => {
     }
 
     return (
+        
         <ScrollView style={styles.container}>
-
+          
             <View style={{ width: 40 }}>
                 <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
             </View>

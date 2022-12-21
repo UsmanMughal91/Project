@@ -5,7 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import Heading from '../../Components/Heading'
 import BtnComp from '../../Components/BtnComp';
 // create a component
-const serviceDetail= ({navigation}) => {
+const ServiceDetail= ({navigation}) => {
     return (
         <View style={styles.container}>
             <View style={{ width: 40 }}>
@@ -41,4 +41,4 @@ const styles = StyleSheet.create({
 });
 
 //make this component available to the app
-export default serviceDetail;
+export default ServiceDetail;

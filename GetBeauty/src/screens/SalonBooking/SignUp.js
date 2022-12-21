@@ -49,7 +49,7 @@ const SignUp = ({ navigation }) => {
                         }
                     )
                 }
-                await fetch('http://192.168.74.7:8000/api/user/register', option)
+                await fetch('http://192.168.10.7:8000/api/user/register', option)
                     .then(res => res.json())
                     .then(d => setdata(d))
                     .catch(err => console.log(err))

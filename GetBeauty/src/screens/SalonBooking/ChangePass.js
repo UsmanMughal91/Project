@@ -47,18 +47,20 @@ const ChangePass = ({navigation}) => {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                       
                     },
                     body: JSON.stringify(
                         {
                             password: `${password}`,
                             password_confirmation: `${password_confirmation}`,
+                            token:localToken
                            
                   
                         }
                     )
                 }
-                await fetch('http://192.168.74.7:8000/api/user/changUserPassword', option)
+                await fetch('http://192.168.10.9:8000/api/user/changUserPassword', option)
                     .then(res => res.json())
                     .then(d => setdata(d))
                     .catch(err => console.log(err))
@@ -70,7 +72,9 @@ const ChangePass = ({navigation}) => {
                         position: 'top',
                         topOffset: 0,
                         text1: data.message
+                        
                     })
+                    navigation.navigate('Setting')
                     // await storeToken(data.token)  // store token in storage 
                     await clearTextInput()
                     // navigation.navigate("SalonAppTabs")

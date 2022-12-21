@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet,Image } from 'react-native';
 
 // create a component
-const splashScreen = () => {
+const SplashScreen = () => {
     return (
         <View style={{flex:1}}> 
         <View style={{ flex: 1, justifyContent: 'center',alignItems:'center',backgroundColor:'white'}}> 
@@ -30,4 +30,4 @@ const styles = StyleSheet.create({
 });
 
 //make this component available to the app
-export default splashScreen;
+export default SplashScreen;

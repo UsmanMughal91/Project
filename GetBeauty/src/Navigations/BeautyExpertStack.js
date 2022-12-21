@@ -9,11 +9,11 @@ import SettingP from '../screens/BeautyExpert/SettingP';
 import Profile from '../screens/BeautyExpert/Profile';
 import Appointment from '../screens/BeautyExpert/Appointment';
 import Request from '../screens/BeautyExpert/Request';
-import splashScreen from '../screens/splashScreen';
-import Login from '../screens/BeautyExpert/Login';
+import SplashScreen from '../screens/SplashScreen';
 import SignUp from '../screens/BeautyExpert/SignUp';
 import ChangePass from '../screens/BeautyExpert/ChangePass';
-import serviceDetail from '../screens/BeautyExpert/serviceDetail'
+import ServiceDetail from '../screens/BeautyExpert/ServiceDetail'
+import LoginExpert from '../screens/BeautyExpert/LoginExpert';
 const Stack = createNativeStackNavigator();
 // create a component
 const BeautyExpertStack = () => {
@@ -27,10 +27,10 @@ const BeautyExpertStack = () => {
     }, [])
     return (
 
-        <Stack.Navigator initialRouteName='splashScreen' screenOptions={{ headerShown: false }}>
-            {showsplashScreen ? (<Stack.Screen name="splashScreen" component={splashScreen} />)
+        <Stack.Navigator initialRouteName='SplashScreen' screenOptions={{ headerShown: false }}>
+            {showsplashScreen ? (<Stack.Screen name="SplashScreen" component={SplashScreen} />)
                 : null}
-            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="LoginExpert" component={LoginExpert} />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="BeautyExpertTabs" component={BeautyExpertTabs} />
             <Stack.Screen name="ProviderServices" component={ProviderServices} />
@@ -41,7 +41,7 @@ const BeautyExpertStack = () => {
             <Stack.Screen name="Appointment" component={Appointment} />
             <Stack.Screen name="Request" component={Request} />
             <Stack.Screen name="ChangePass" component={ChangePass} />
-            <Stack.Screen name="serviceDetail" component={serviceDetail} />
+            <Stack.Screen name="ServiceDetail" component={ServiceDetail} />
         </Stack.Navigator>
     )
 };
