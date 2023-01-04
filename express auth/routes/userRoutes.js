@@ -17,6 +17,12 @@ router.post('/reset-password/:id/:token',userController.userPasswordReset)
 
 router.post('/changUserPassword', userController.changeUserPassword)
 router.get('/loggedUser', userController.loggedUser)
+router.post('/loadservices', userController.loadservices)
+router.post('/booking', userController.booking)
+router.post('/loadRequests', userController.loadRequests)
+router.post('/loadprofile', userController.loadprofile)
+router.post('/updateprofile', userController.updateprofile)
+
 
 
 export default router

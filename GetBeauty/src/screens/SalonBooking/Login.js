@@ -11,6 +11,8 @@ import BtnComp from '../../Components/BtnComp';
 import { toastConfig } from '../../Styles/styles';
 import Toast from 'react-native-toast-message';
 import { storeToken } from '../../../services/AsyncStorage';
+import Colors from '../../Styles/Colors';
+import Font from '../../Styles/Font';
 // create a component
 
 const Login = ({ navigation }) => {
@@ -43,25 +45,28 @@ const Login = ({ navigation }) => {
                       }
                   )
               }
-              await fetch('http://192.168.214.7:8000/api/user/login', option)
+              await fetch('http://192.168.197.7:8000/api/user/login', option)
                   .then(res => res.json())
-                  .then(d => setdata(d))
+                  .then(d =>{
+                    setdata(d)
+                    if (d.status === "success") {
+                         storeToken(d.token)  // store token in storage 
+                         clearTextInput()
+                        navigation.navigate("SalonAppDrawer")
+                    } 
+                    else(data.status === "failed")
+                    {
+                        Toast.show({
+                            type: 'warning',
+                            position: 'top',
+                            topOffset: 0,
+                            text1: d.message
+                        })
+                    }
+                })
                   .catch(err => console.log(err))
                   
-              if (data.status === "success") {
-                  await storeToken(data.token)  // store token in storage 
-                  await clearTextInput()
-                  navigation.navigate("SalonAppTabs")
-              } 
-              else(data.status === "failed")
-              {
-                  Toast.show({
-                      type: 'warning',
-                      position: 'top',
-                      topOffset: 0,
-                      text1: data.message
-                  })
-              }
+              
           } catch (error) {
               console.log(error)
           }
@@ -83,13 +88,15 @@ const Login = ({ navigation }) => {
         
         <ScrollView style={styles.container}>
           
-            <View style={{ width: 40 }}>
-                <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-            </View>
+           
             <Toast config={toastConfig} />
-            <View style={{ justifyContent: "center", alignContent: "center", alignSelf: "center" }}>
-                <Image source={require('../../assests/images/logoo.png')} style={{ width: 250, height: 250 }} />
-            </View>
+         <View style={{alignSelf:'center'}}>
+                <Image source={require('../../assests/images/logo1.png')}  resizeMode={"center"} style={{height:300}}/>
+
+         </View>
+
+         
+          
             <Heading text={"Login"} />
 
             <View style={{ marginTop: 20 }}>
@@ -110,18 +117,18 @@ const Login = ({ navigation }) => {
                         }}/>}
                 />
                 <View style={{ alignItems: "flex-end", paddingTop: 10 }}>
-                    <TouchableOpacity onPress={()=>navigation.navigate("forgotPass")}>
+                    <TouchableOpacity onPress={()=>navigation.navigate("ForgotPass")}>
 
-                        <Text style={{ fontSize: 17, color: 'orange' }}>Forgot Password?</Text>
+                        <Text style={{ fontSize:Font.font, color: Colors.purple }}>Forgot Password?</Text>
                     </TouchableOpacity>
                 </View>
             </View>
 
             <BtnComp onPress={handleform} btnStyle={styles.btn} btnText={"LOGIN"} />
             <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-                <Text style={{ color: 'black', fontSize: 18 }}>Don't have an account?</Text>
+                <Text style={{ color:Colors.black, fontSize:Font.font }}>Don't have an account?</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                    <Text style={{ color: 'orange', fontSize: 18 }}>Sign up</Text>
+                    <Text style={{ color:Colors.purple, fontSize:Font.font}}> Sign up</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>

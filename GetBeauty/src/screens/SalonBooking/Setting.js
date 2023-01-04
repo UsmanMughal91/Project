@@ -1,26 +1,27 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity,ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Heading from '../../Components/Heading';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { removeToken } from '../../../services/AsyncStorage';
+import Header from '../../Components/Header';
+
 // create a component
 const Setting = ({navigation}) => {
 
     const logout =async()=>{
          await removeToken()
-         navigation.navigate('registerOption')
+         navigation.navigate('RegisterOption')
     }
     return (
+        <View>
+            <Header onPress={() => navigation.goBack()} />
+            <ScrollView> 
         <View style={styles.container}>
-            <View style={{ width: 40 }}>
-                <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-            </View>
             <Heading text={"Settings"}/>
-
               <TouchableOpacity style={{marginBottom:20,marginTop:20}} onPress={()=>navigation.navigate('UserProfile')}>
             <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: "white", borderRadius: 12, height: 50 }}>
                     <View style={{ marginLeft: 10 }}>
@@ -63,11 +64,8 @@ const Setting = ({navigation}) => {
                     </View>
                 </View>
             </TouchableOpacity>
-
-
-
-           
-
+        </View>
+        </ScrollView>
         </View>
     );
 };
@@ -76,8 +74,7 @@ const Setting = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        margin: 20
-
+        margin: 20,
     },
 });
 

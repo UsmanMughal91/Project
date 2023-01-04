@@ -1,5 +1,5 @@
 //import liraries
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Heading from '../../Components/Heading';
@@ -10,20 +10,20 @@ import BtnComp from '../../Components/BtnComp';
 import { toastConfig } from '../../Styles/styles';
 import Toast from 'react-native-toast-message';
 import { getToken } from '../../../services/AsyncStorage';
-
+import Header from "../../Components/Header"
 // create a component
-const ChangePass = ({navigation}) => {
-   
+const ChangePass = ({ navigation }) => {
+
     const [password, setpassword] = useState('')
     const [password_confirmation, setpassword_confirmation] = useState('')
-    const [data,setdata] = useState('')
+    const [data, setdata] = useState('')
     const [localToken, setlocalToken] = useState()
     const [show, setshow] = useState(false)
     const [visible, setvisible] = useState(true)
     const [show1, setshow1] = useState(false)
     const [visible1, setvisible1] = useState(true)
 
-    
+
     useEffect(() => {
         (
             async () => {
@@ -37,108 +37,105 @@ const ChangePass = ({navigation}) => {
         setpassword('')
         setpassword_confirmation('')
     }
-    
+
     const handleform = async () => {
-        
+
         if (password && password_confirmation) {
-           
+
             try {
                 const option = {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                       
+
                     },
                     body: JSON.stringify(
                         {
                             password: `${password}`,
                             password_confirmation: `${password_confirmation}`,
-                            token:localToken
-                           
-                  
+                            token: localToken
+
+
                         }
                     )
                 }
-                await fetch('http://192.168.10.9:8000/api/user/changUserPassword', option)
+                await fetch('http://192.168.10.8:8000/api/user/changUserPassword', option)
                     .then(res => res.json())
-                    .then(d => setdata(d))
+                    .then(d => {
+                        setdata(d)
+                        if (d.status === "success") {
+                            // Toast.show({
+                            //     type: 'done',
+                            //     position: 'top',
+                            //     topOffset: 0,
+                            //     text1: d.message
+
+                            // })
+                            alert("Password has been changed")
+                            navigation.navigate('Setting')
+
+                        } else {
+
+                            Toast.show({
+                                type: 'warning',
+                                position: 'top',
+                                topOffset: 0,
+                                text1: d.message
+                            })
+                        }
+                    })
                     .catch(err => console.log(err))
-                    
-
-                if (data.status === "success") {
-                    Toast.show({
-                        type: 'done',
-                        position: 'top',
-                        topOffset: 0,
-                        text1: data.message
-                        
-                    })
-                    navigation.navigate('Setting')
-                    // await storeToken(data.token)  // store token in storage 
-                    await clearTextInput()
-                    // navigation.navigate("SalonAppTabs")
-                } else {
-
-                    Toast.show({
-                        type: 'warning',
-                        position: 'top',
-                        topOffset: 0,
-                        text1: data.message
-                    })
-                }
             } catch (error) {
                 console.log(error)
             }
-
-
         } else {
             Toast.show({
                 type: 'warning',
                 position: 'top',
                 topOffset: 0,
-                text1: "All fields are required"
+                text1: "All fields are required",
             })
         }
-
-
     }
     return (
-        <View style={styles.container}>
-            <View style={{ width: 40 }}>
-                <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-            </View>
+        <View>
+            <Header onPress={() => navigation.goBack()} />
             <Toast config={toastConfig} />
-            <Heading text={"Change Password"} />
-            <View style={{ marginTop: 50, marginBottom: 50 }}>
+            <View style={styles.container}>
 
-               
-                <InputText Icon={<MaterialCommunityIcons name="lock" size={25} />}
-                    placeholder={'New Password'}
-                    secureTextEntry={visible}
-                    onChangeText={setpassword}
-                    Icons={<MaterialCommunityIcons name={show === false ? "eye-off-outline" : "eye-outline"} size={25}
-                        onPress={
-                            () => {
-                                setvisible(!visible)
-                                setshow(!show)
 
-                            }} />}/>
+                <Heading text={"Change Password"} />
+                <View style={{ marginTop: 50, marginBottom: 50 }}>
 
-                <InputText Icon={<MaterialCommunityIcons name="lock" size={25} />}
-                    placeholder={'Confirm Password'}
-                    secureTextEntry={visible1}
-                    onChangeText={setpassword_confirmation}
-                    Icons={<MaterialCommunityIcons name={show1 === false ? "eye-off-outline" : "eye-outline"} size={25}
-                        onPress={
-                            () => {
-                                setvisible1(!visible1)
-                                setshow1(!show1)
 
-                            }} />} />
+                    <InputText Icon={<MaterialCommunityIcons name="lock" size={25} />}
+                        placeholder={'New Password'}
+                        secureTextEntry={visible}
+                        onChangeText={setpassword}
+                        Icons={<MaterialCommunityIcons name={show === false ? "eye-off-outline" : "eye-outline"} size={25}
+                            onPress={
+                                () => {
+                                    setvisible(!visible)
+                                    setshow(!show)
+
+                                }} />} />
+
+                    <InputText Icon={<MaterialCommunityIcons name="lock" size={25} />}
+                        placeholder={'Confirm Password'}
+                        secureTextEntry={visible1}
+                        onChangeText={setpassword_confirmation}
+                        Icons={<MaterialCommunityIcons name={show1 === false ? "eye-off-outline" : "eye-outline"} size={25}
+                            onPress={
+                                () => {
+                                    setvisible1(!visible1)
+                                    setshow1(!show1)
+
+                                }} />} />
+                </View>
+                <BtnComp btnText={"Change Password"} onPress={handleform} />
+
             </View>
-            <BtnComp btnText={"Change Password"} onPress={handleform}/>
-
         </View>
     );
 };
@@ -146,7 +143,6 @@ const ChangePass = ({navigation}) => {
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         margin: 20
     },
 

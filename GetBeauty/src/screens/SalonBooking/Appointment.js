@@ -1,11 +1,15 @@
 //import liraries
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import Back from '../../Components/Back';
 import Heading from '../../Components/Heading';
+import { getToken } from '../../../services/AsyncStorage';
+import Header from '../../Components/Header';
+import Colors from '../../Styles/Colors';
+import Font from '../../Styles/Font';
+
 // create a component
 const Appointment = ({ navigation }) => {
+    const [data,setdata] = useState()
     const Data = [
         {
             name: 'Sofiya beauty',
@@ -43,42 +47,75 @@ const Appointment = ({ navigation }) => {
             pkr: '9000 Rs'
         }
     ]
-    return (
-        <View style={styles.container}>
-            
-            <View style={{ width: 40 }}>
-                <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-            </View>
-            <Heading text={"Appointment History"}/>
-            <View style={{ flexDirection: 'row', backgroundColor: "white", borderRadius: 12, height: 40, justifyContent: 'space-between', alignItems: 'center', marginTop: 20 }}>
-                <Text style={{ fontSize: 16, color: 'black', marginLeft: 10 }}>Beauty Experts</Text>
-                <Text style={{ fontSize: 16, color: 'black', marginLeft: 40 }}>Description</Text>
-                <Text style={{ fontSize: 16, color: 'black', marginRight: 10 }}>Status</Text>
-            </View>
-            <FlatList
-                data={Data}
+    const loadRequests = async (token) =>{
+        const option = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                {
+                    token:token
+                }
+            )
+        }
+        try {
+            await fetch('http://192.168.103.8:8000/api/user/loadRequests',option)
+            .then((res)=>res.json())
+            .then((d) => {
+                setdata(d.data)
+                console.log(d)
+            })
+            .catch(err => console.log(err))
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
+    useEffect(()=>{
+        (   async () => {
+            const token = await getToken() 
+            loadRequests(token);
+        })();
+    },[])
+    return (
+        <View>
+                    <Header onPress={() => navigation.goBack()} />
+                    
+        
+        <View style={styles.container}>
+                <Heading text={"Appointment History"} />
+            <View style={{ flexDirection: 'row', backgroundColor:Colors.purple, borderRadius: 12, height: 40, justifyContent: 'space-between', alignItems: 'center', marginTop: 20 }}>
+                <Text style={{ fontSize:Font.font, color: Colors.white, marginLeft: 10 }}>Beauty Experts</Text>
+                    <Text style={{ fontSize: Font.font, color: Colors.white, marginLeft: 40 }}>Description</Text>
+                    <Text style={{ fontSize: Font.font, color: Colors.white, marginRight: 10 }}>Status</Text>
+            </View>
+                {data &&  <FlatList
+                data={data}
+                keyExtractor={data=>data._id}
                 renderItem={({ item }) => (
                     <View style={{ flexDirection: 'row', flex: 1, marginTop: 20, marginBottom: 10 }}>
                         <View>
-                            <Image source={item.img} style={{ width: 50, height: 50, borderRadius: 50 }} />
+                            <Image source={{uri:item.expert.pic}} style={{ width: 50, height: 50, borderRadius: 50 }} />
 
                         </View>
                         <View style={{ width: 130 }}>
-                            <Text style={{ fontSize: 18, color: 'black', marginLeft: 10 }}>{item.name}</Text>
-                            <Text style={{ marginLeft: 10 }}>{item.exp}</Text>
+                            <Text style={{ fontSize:Font.list, color:Colors.black, marginLeft: 10 }}>{item.expert.name}</Text>
+                            <Text style={{ marginLeft: 10 }}>{item.expert.parlourName}</Text>
                         </View>
-                        <View style={{  marginLeft: 10, width: 100 }}>
-                            <Text>{item.date}</Text>
-                            <Text>{item.pkr}</Text>
+                        <View style={{  marginLeft: 10, width: 100, }}>
+                            <Text >{item.date}</Text>
+                            <Text >{item.service.servicePrice} Pkr</Text>
                         </View>
-                        <View style={{ marginLeft: 10,backgroundColor:"white",borderRadius:12,width:70,alignItems:'center',justifyContent:'center',height:30}}>
+                        <View style={{ marginLeft: 10,backgroundColor:Colors.grey,borderRadius:12,width:70,alignItems:'center',justifyContent:'center',height:30,alignSelf:"center"}}>
 
-                            <Text style={{textAlign:'center',fontSize:12}}>{item.status}</Text>
+                            <Text style={{textAlign:'center',fontSize:12,color:Colors.purple}}>{item.status}</Text>
 
                         </View>
                     </View>)
-                } />
+                } /> }
+        </View>
         </View>
     );
 };
@@ -86,7 +123,6 @@ const Appointment = ({ navigation }) => {
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         margin: 20
     },
 });

@@ -3,11 +3,13 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import transporter from '../config/emailConfig.js'
 import ExpertModel from '../models/Expert.js'
+import ServiceModel from '../models/Services.js'
+import BookingModel from '../models/Booking.js'
 
 class ExpertController {
     static userRegistration = async (req, res) => {
         // console.log(req.body)
-        const { name, email, password, password_confirmation, parlourName, phone, address ,pic} = req.body
+        const { name, email, password, password_confirmation, parlourName, phone, address, pic } = req.body
         console.log(req.body)
         const user = await ExpertModel.findOne({ email: email })
         if (user) {
@@ -22,10 +24,10 @@ class ExpertController {
                             name: name,
                             email: email,
                             password: hashPassword,
-                            phone:phone,
-                            parlourName:parlourName,
-                            address:address,
-                            pic:pic
+                            phone: phone,
+                            parlourName: parlourName,
+                            address: address,
+                            pic: pic
 
                         })
                         await doc.save()
@@ -47,7 +49,6 @@ class ExpertController {
     }
 
     static userLogin = async (req, res) => {
-        console.log(req.body)
         try {
             const { email, password } = req.body
             if (email && password) {
@@ -75,7 +76,7 @@ class ExpertController {
     }
 
     static changeUserPassword = async (req, res) => {
-     
+
         const { token, password, password_confirmation } = req.body
         console.log(req.body)
         var data = JSON.parse(atob(token.split('.')[1]));
@@ -103,7 +104,7 @@ class ExpertController {
             if (user) {
                 const secret = user._id + process.env.JWT_SECRET_KEY
                 const token = jwt.sign({ userID: user._id }, secret, { expiresIn: '15m' })
-                const link = `http://127.0.0.1:3000/api/expert/reset/${user._id}/${token}`
+                const link = `http://127.0.0.1:3000/api/Expert/reset/${user._id}/${token}`
                 console.log(link)
                 // // Send Email
                 // let info = await transporter.sendMail({
@@ -163,6 +164,136 @@ class ExpertController {
         } catch (error) {
             console.log(error)
             res.send({ "status": "failed", "message": "failed to get list" })
+        }
+    }
+
+    static loadprofile = async (req, res) => {
+        console.log('loadprofile')
+        const token = req.body.token
+        var data = JSON.parse(atob(token.split('.')[1]));
+        try {
+            const docs = await ExpertModel.findById(data.userID) 
+            if(docs){
+            res.send({ "status": "success", "data": docs })
+        } else {
+            res.send({ "status": "failed", "message": "user not found" })
+
+        }
+
+        } catch (error) {
+            console.log(error)
+            res.send({ "status": "failed", "message": "failed to get user" })
+        }
+    }
+
+    static updateprofile = async (req, res) => {
+        const data = req.body
+        const token = req.body.token
+        var d = JSON.parse(atob(token.split('.')[1]));
+            try {
+                const user = ExpertModel.findByIdAndUpdate(d.userID,
+                    {
+                        name:data.name,
+                        parlourName:data.parlourName,
+                        address:data.address,
+                        phone:data.phone,
+                        pic:data.pic,
+                        about:data.about,
+                }, function (err,docs) {
+                    if (err){
+                        console.log(err)
+                    }
+                    else{
+                        res.send({ "status": "success", "message": "Profile update successfully" })
+                    }
+                })
+                console.log(user)
+            } catch (error) {
+                console.log(error)
+                res.send({ "status": "failed", "message": "failed to get list" })
+            }
+    }
+
+    static addservice = async (req, res) => {
+        const data = req.body
+        console.log(data)
+        const token = req.body.token
+        var d = JSON.parse(atob(token.split('.')[1]));
+        const exists = await ServiceModel.findOne({serviceName:data.serviceName})
+        if(!exists) {
+            try {
+                const doc = new ServiceModel({
+                    id: d.userID,
+                    serviceName: data.serviceName,
+                    servicePrice: data.servicePrice,
+                    serviceDetails: data.serviceDetails,
+                    pic: data.pic,
+                })
+                await doc.save()
+                res.status(201).send({ "status": "success", "message": "Service added successfully" })
+            } catch (error) {
+                console.log(error)
+                res.send({ "status": "failed", "message": "failed to add service" })
+            }
+        } else {
+            res.send({ "status": "failed", "message": "Service already exists" })
+        }
+    }
+    static loadservices = async (req, res) => {
+        console.log('req made')
+        const token = req.body.token
+        var data = JSON.parse(atob(token.split('.')[1]));
+        try {
+            const docs = ServiceModel.find({id:data.userID}, function (err, docs) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    res.send({ "status": "success", "data": docs })
+                }
+            });
+        } catch (error) {
+            console.log(error)
+            res.send({ "status": "failed", "message": "failed to get list" })
+        }
+    }
+
+    static loadRequests = async (req, res) => {
+        console.log(req.body)
+        const token = req.body.token
+        var data = JSON.parse(atob(token.split('.')[1]));
+
+        try {
+            const user = BookingModel.find({expertID:data.userID}, function (err, docs) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    res.send({ "status": "success", "data": docs })
+                }
+            });
+        } catch (error) {
+            console.log(error)
+            res.send({ "status": "failed", "message": "failed to get list" })
+        }
+    }
+
+    static booking = async (req,res) =>{
+        const data = req.body.item
+        const newStatus = req.body.newStatus
+        try {
+            BookingModel.findOneAndUpdate({_id: data._id }, 
+                {status: newStatus}, function (err, docs) {
+                if (err){
+                    console.log(err)
+                }
+                else{
+                    res.send({ "status": "success", message: "data updated successfully" })
+                }
+            });
+        } catch (error) {
+            res.send({ "status": "failed", message: "failed to save data" })
+            
         }
     }
 }

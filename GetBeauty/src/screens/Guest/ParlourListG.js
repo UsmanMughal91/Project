@@ -1,8 +1,10 @@
 //import liraries
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Button, ImageBackground, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Button, ImageBackground, TextInput, Dimensions } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Heading from '../../Components/Heading';
+
+import Colors from '../../Styles/Colors';
 
 
 // create a component
@@ -60,8 +62,6 @@ const ParlorListG = ({ navigation }) => {
     ]
 
 
-
-
     return (
 
 
@@ -94,7 +94,9 @@ const ParlorListG = ({ navigation }) => {
 
             </ImageBackground>
             <ScrollView style={{ margin: 20 }}>
-                <Text style={{fontSize:30,color:"black",fontWeight:"600"}}>Choose Parlour</Text>
+                <Text style={{ fontSize: 30, color: "black", fontWeight: "600" }}>Choose Parlour</Text>
+
+              
 
                 <FlatList
 
@@ -147,7 +149,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginBottom: 20,
     },
-    
+
 
 
 });

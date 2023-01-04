@@ -1,12 +1,13 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
+import Font from '../Styles/Font';
+import Colors from '../Styles/Colors';
 // create a component
-const Heading = ({text}) => {
+const Heading = ({text,textStyle,ViewStyle}) => {
     return (
-        <View style={{alignItems:"center"}}>
-            <Text style={styles.container}>{text}</Text>
+        <View style={{...styles.ViewStyle,...ViewStyle}}>
+            <Text style={{...styles.container,...textStyle}}>{text}</Text>
         </View>
     );
 };
@@ -14,12 +15,14 @@ const Heading = ({text}) => {
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        fontSize: 30,
+        fontSize: Font.Heading,
         fontWeight: '600',
-        color: 'black',
-        marginTop: 10,
-        
+        color: Colors.black,
+        marginTop: 10,  
     },
+    ViewStyle:{
+        alignItems: "center"
+    }
 });
 
 //make this component available to the app

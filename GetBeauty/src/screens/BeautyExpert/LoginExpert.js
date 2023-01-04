@@ -10,7 +10,9 @@ import InputText from '../../Components/InputText';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import BtnComp from '../../Components/BtnComp';
 import { toastConfig } from '../../Styles/styles';
+import { storeToken } from '../../../services/AsyncStorage';
 import Toast from 'react-native-toast-message';
+import Font from '../../Styles/Font';
 // create a component
 const LoginExpert = ({ navigation }) => {
 
@@ -41,24 +43,28 @@ const LoginExpert = ({ navigation }) => {
                         }
                     )
                 }
-                await fetch('http://192.168.214.7:8000/api/Expert/login', option)
+                await fetch('http://192.168.197.7:8000/api/Expert/login', option)
                     .then(res => res.json())
-                    .then(d => setdata(d))
+                    .then((d) => {
+                        setdata(d)
+                        if (d.status === "success") {
+                            storeToken(d.token)  // store token in storage 
+                            clearTextInput()
+                            navigation.navigate("ExpertDrawer")
+                        }
+                        else (d.status === "failed")
+                        {
+                            Toast.show({
+                                type: 'warning',
+                                position: 'top',
+                                topOffset: 0,
+                                text1: d.message
+                            })
+                        }
+                    })
                     .catch(err => console.log(err))
 
-                if (data.status === "success") {
-                    await clearTextInput()
-                    navigation.navigate("BeautyExpertTabs")
-                }
-                else (data.status === "failed")
-                {
-                    Toast.show({
-                        type: 'warning',
-                        position: 'top',
-                        topOffset: 0,
-                        text1: data.message
-                    })
-                }
+                
             } catch (error) {
                 console.log(error)
             }
@@ -76,19 +82,17 @@ const LoginExpert = ({ navigation }) => {
     return (
         <ScrollView style={styles.container}>
 
-            <View style={{ width: 40 }}>
-                <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-            </View>
+        
             <Toast config={toastConfig} />
-            <View style={{ justifyContent: "center", alignContent: "center", alignSelf: "center" }}>
-                <Image source={require('../../assests/images/logoo.png')} style={{ width: 250, height: 250 }} />
+            <View style={{alignSelf:"center"}}>
+                <Image source={require('../../assests/images/logo2.png')} resizeMode={"center"} style={{height:300}}/>
             </View>
             <Heading text={"Login"} />
 
             <View style={{ marginTop: 20 }}>
                 <InputText Icon={<MaterialCommunityIcons name="email" size={25} />}
                     placeholder={'Email'}
-                    onChangeText={setemail}
+                    onChangeText={(val)=>{setemail(val)}}
                 />
                 <InputText Icon={<MaterialCommunityIcons name="lock" size={25} />}
                     placeholder={'Password'}
@@ -103,18 +107,18 @@ const LoginExpert = ({ navigation }) => {
                             }} />}
                 />
                 <View style={{ alignItems: "flex-end", paddingTop: 10 }}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={()=> navigation.navigate("ForgotPass")}>
 
-                        <Text style={{ fontSize: 17, color: 'orange' }}>Forgot Password?</Text>
+                        <Text style={{ fontSize:Font.font, color:Colors.purple }}>Forgot Password?</Text>
                     </TouchableOpacity>
                 </View>
             </View>
 
             <BtnComp onPress={handleform} btnStyle={styles.btn} btnText={"LOGIN"} />
             <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-                <Text style={{ color: 'black', fontSize: 18 }}>Don't have an account?</Text>
+                <Text style={{ color:Colors.black, fontSize:Font.font }}>Don't have an account?</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                    <Text style={{ color: 'orange', fontSize: 18 }}>Sign up</Text>
+                    <Text style={{ color:Colors.purple, fontSize:Font.font }}> Sign up</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>

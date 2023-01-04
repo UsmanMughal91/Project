@@ -1,10 +1,18 @@
 //import liraries
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import React, { Component, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image,ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Heading from '../../Components/Heading';
+import { getToken } from '../../../services/AsyncStorage';
+import Header from '../../Components/Header'
+import Loader from '../../Components/Loader';
+import Colors from '../../Styles/Colors';
+import Font from '../../Styles/Font';
 // create a component
 const Request = ({ navigation }) => {
+    const [data,setdata] = useState("")
+    const [refresh,setrefresh] = useState(false)
+    const [loading, setloading] = useState(true);
     const DATA = [
         {
             id: 1,
@@ -50,56 +58,139 @@ const Request = ({ navigation }) => {
         },
 
     ]
+    const loadRequests = async (token) =>{
+        const option = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                {
+                    token:token
+                }
+            )
+        }
+        try {
+            await fetch('http://192.168.103.8:8000/api/Expert/loadRequests',option)
+            .then((res)=>res.json())
+            .then((d) => {
+                setdata(d.data);setloading(false)
+            })
+            .catch(err => console.log(err))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    const accept = async (item) => {
+        console.log("ruuuu")
+        const option = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                {
+                    item:item,
+                    newStatus:"Accepted",
+                }
+            )
+        }
+        try {
+            await fetch('http://192.168.103.8:8000/api/Expert/booking',option)
+            .then((res)=>res.json())
+            .then((d) => {
+                setrefresh(true)
+            })
+            .catch(err => console.log(err))
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
+    const cancle = async (item) => {
+        
+        const option = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                {
+                    item:item,
+                    newStatus:"Cancelled",
+                }
+            )
+        }
+        try {
+            await fetch('http://192.168.103.8:8000/api/Expert/booking',option)
+            .then((res)=>res.json())
+            .then((d) => {
+                setrefresh(true)
+            })
+            .catch(err => console.log(err))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    useEffect(()=>{
+        (   async () => {
+            const token = await getToken() 
+            loadRequests(token);
+        })();
+    },[refresh])
     return (
+        <ScrollView>
+            <Header onPress={()=>navigation.goBack()}/>
         <View style={styles.container}>
-            <View style={{ width: 40 }}>
-                <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-            </View>
+            
            <Heading text={"Customer Request"}/>
-            <FlatList
+                {loading && <Loader/>}
+                {data &&  <FlatList
 
-                data={DATA}
-                keyExtractor={DATA => DATA.id.toString()}
-                renderItem={({ item }) => (
-                    <View style={{ flex: 1, }}>
+                data={data.filter((item)=>{if(item.status === "Requested") return item })}
+                keyExtractor={data => data._id}
+                renderItem={({ item }) =>{ 
+                 return (
+                    <View style={{flex:1}}>
 
-                        <View style={{ flexDirection: 'row', marginTop: 15, marginBottom: 15, }}>
-                            <View>
-                                <Image source={item.images}
+                        <View style={{ flexDirection: 'row', marginTop: 15, marginBottom: 15,justifyContent:'space-between'}}>
+                            <View style={{width:60}}>
+                                <Image source={{uri:item.user.pic}}
                                     style={{ borderRadius: 40, width: 50, height: 50 }}
                                 />
                             </View>
-                            <View style={{ marginLeft: 10, width: "50%", }}>
-                                <Text style={{ color: 'black', fontSize: 18 }}>{item.Name}</Text>
-                                <Text>{item.date}</Text>
-                                <Text>{item.pkr}</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', alignItems:'center'}}>
-                                <TouchableOpacity style={{ backgroundColor: 'white', width:60,height:30,borderRadius:15,}}>
-                                    <Text style={{ fontSize: 15, textAlign: 'center',}}>Accept</Text>
-                                  
+                            <View style={{flex:1 }}>
+                                <TouchableOpacity onPress={()=>navigation.navigate('ServiceSummary',{item})}> 
+                                    <Text style={{ color:Colors.black, fontSize:Font.list }}>{item.user.name}</Text>
+                                    <Text>{item.date}</Text>
+                                    <Text>{item.service.servicePrice} Rs</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ backgroundColor: 'white', width: 60, height: 30, borderRadius: 15, margin: 5 }}>
-                                    <Text style={{  fontSize: 15,textAlign:'center', }}>Cancel</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row',alignSelf:"center",width:120,flexWrap:"wrap",justifyContent:'space-around'}}>
+                                <TouchableOpacity style={{ backgroundColor:Colors.grey,borderRadius:12,justifyContent:'center',padding:4}} onPress={()=>accept(item)}>
+                                     <Text style={{ fontSize: 13, textAlign: 'center',color:Colors.purple }}>Accept</Text>
+                                </TouchableOpacity>
+                                 <TouchableOpacity style={{ backgroundColor: Colors.grey, borderRadius: 12, justifyContent: 'center', padding:4,}} onPress={() => cancle(item)}>
+                                     <Text style={{ fontSize: 13, textAlign: 'center', color: Colors.purple }} >Cancel</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
 
                     </View>
 
-                )} />
+                )}} />}
         </View>
-
+        </ScrollView>
     );
 };
 
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         margin: 20,
-
     },
 });
 

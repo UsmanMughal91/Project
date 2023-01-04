@@ -5,11 +5,10 @@ const ExpertSchema = new mongoose.Schema({
     parlourName: { type: String,  trim: true,required:true },
     email: { type: String, required: true, trim: true },
     password: { type: String, required: true, trim: true },
-    phone: { type: Number, trim: true },
+    phone: { type: String, trim: true },
     pic: { type: String ,required:true },
     address: { type:String, trim: true },
-
-
+    about: { type: String, trim: true },
 })
 
 

@@ -10,6 +10,7 @@ import BtnComp from '../../Components/BtnComp';
 import { toastConfig } from '../../Styles/styles';
 import Toast from 'react-native-toast-message';
 import { getToken } from '../../../services/AsyncStorage';
+import Header from '../../Components/Header';
 
 // create a component
 const ChangePass = ({ navigation }) => {
@@ -25,8 +26,7 @@ const ChangePass = ({ navigation }) => {
 
 
     useEffect(() => {
-        (
-            async () => {
+        (   async () => {
                 const token = await getToken() // getting token from storage
 
                 setlocalToken(token) // store token in local state
@@ -60,7 +60,7 @@ const ChangePass = ({ navigation }) => {
                         }
                     )
                 }
-                await fetch('http://192.168.10.9:8000/api/Expert/changUserPassword', option)
+                await fetch('http://192.168.10.8:8000/api/Expert/changUserPassword', option)
                     .then(res => res.json())
                     .then(d => setdata(d))
                     .catch(err => console.log(err))
@@ -104,11 +104,11 @@ const ChangePass = ({ navigation }) => {
 
     }
     return (
-        <View style={styles.container}>
-            <View style={{ width: 40 }}>
-                <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-            </View>
+        <View>
             <Toast config={toastConfig} />
+            <Header onPress={() => navigation.goBack()} />
+            <View style={styles.container}>
+            
             <Heading text={"Change Password"} />
             <View style={{ marginTop: 50, marginBottom: 50 }}>
 
@@ -138,7 +138,7 @@ const ChangePass = ({ navigation }) => {
                             }} />} />
             </View>
             <BtnComp btnText={"Change Password"} onPress={handleform} />
-
+            </View>
         </View>
     );
 };
@@ -146,7 +146,7 @@ const ChangePass = ({ navigation }) => {
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        
         margin: 20
     },
 

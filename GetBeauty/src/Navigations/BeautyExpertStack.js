@@ -9,11 +9,15 @@ import SettingP from '../screens/BeautyExpert/SettingP';
 import Profile from '../screens/BeautyExpert/Profile';
 import Appointment from '../screens/BeautyExpert/Appointment';
 import Request from '../screens/BeautyExpert/Request';
-import SplashScreen from '../screens/SplashScreen';
 import SignUp from '../screens/BeautyExpert/SignUp';
 import ChangePass from '../screens/BeautyExpert/ChangePass';
 import ServiceDetail from '../screens/BeautyExpert/ServiceDetail'
 import LoginExpert from '../screens/BeautyExpert/LoginExpert';
+import ServiceSummary from '../screens/BeautyExpert/ServiceSummary';
+import ExpertSplash from "../screens/ExpertSplash"
+import CompleteOrder from '../screens/BeautyExpert/CompleteOrder';
+import ForgotPass from '../screens/BeautyExpert/ForgotPass';
+import ResetPass from '../screens/BeautyExpert/ResetPass';
 const Stack = createNativeStackNavigator();
 // create a component
 const BeautyExpertStack = () => {
@@ -23,12 +27,12 @@ const BeautyExpertStack = () => {
     useEffect(() => {
         setTimeout(() => {
             setshowsplashScreen(false);
-        }, 3000);
+        }, 1000);
     }, [])
     return (
 
-        <Stack.Navigator initialRouteName='SplashScreen' screenOptions={{ headerShown: false }}>
-            {showsplashScreen ? (<Stack.Screen name="SplashScreen" component={SplashScreen} />)
+        <Stack.Navigator initialRouteName='ExpertSplash' screenOptions={{ headerShown: false }}>
+            {showsplashScreen ? (<Stack.Screen name="ExpertSplash" component={ExpertSplash} />)
                 : null}
             <Stack.Screen name="LoginExpert" component={LoginExpert} />
             <Stack.Screen name="SignUp" component={SignUp} />
@@ -42,6 +46,11 @@ const BeautyExpertStack = () => {
             <Stack.Screen name="Request" component={Request} />
             <Stack.Screen name="ChangePass" component={ChangePass} />
             <Stack.Screen name="ServiceDetail" component={ServiceDetail} />
+            <Stack.Screen name="ServiceSummary" component={ServiceSummary} />
+            <Stack.Screen name="CompleteOrder" component={CompleteOrder} />
+            <Stack.Screen name="ForgotPass" component={ForgotPass} />
+            <Stack.Screen name="ResetPass" component={ResetPass} />
+           
         </Stack.Navigator>
     )
 };

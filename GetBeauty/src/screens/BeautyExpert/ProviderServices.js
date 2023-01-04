@@ -1,13 +1,23 @@
 //import liraries
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, FlatList, TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Heading from '../../Components/Heading';
+import { getToken } from '../../../services/AsyncStorage';
+import Loader from '../../Components/Loader';
+import Header from '../../Components/Header';
+import Colors from '../../Styles/Colors';
+
 // create a component
 const ProviderServices = ({ navigation }) => {
-   
-       
+   const [data,setdata] = useState();
+   const [serviceName,setserviceName] = useState();
+   const [servicePrice,setservicePrice] = useState();
+   const [pic,setpic] = useState();
+   const [id,setid] = useState();
+   const [search,setSearch] = useState("")
+    const [loading, setloading] = useState(true)
     const Data = [
         {
             id: 1,
@@ -48,51 +58,91 @@ const ProviderServices = ({ navigation }) => {
             del: <MaterialIcons name='delete' size={25}  />
         }
     ]
+    const loadservices = async (token) =>{
+        const option = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                {
+                    token:token
+                }
+            )
+        }
+        try {
+            await fetch('http://192.168.103.8:8000/api/Expert/loadservices',option)
+            .then((res)=>res.json())
+            .then((d) => {
+                setdata(d.data);setloading(false)
+            })
+            .catch(err => console.log(err))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    
+    useEffect(()=>{
+        (   async () => {
+            const token = await getToken() // getting token from storage
+            loadservices(token);
+        })();
+    },[])
     return (
-        <View style={styles.container}>
+        <ScrollView>
+           
+            <Header onPress={() => navigation.goBack()} />
+            {loading && <Loader viewStyle={{ marginTop: 330 }} />}
+        {data && 
+            <View style={styles.container}>
             <View style={{ flex: 1 }}>
-                <View style={{ width: 40 }}>
-                    <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-                </View>
+             
                 <Heading text={"Services"}/>
 
                 <View style={{ marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: 'space-between', backgroundColor: 'white', borderRadius: 12, marginTop: 20 }}>
                     <View>
-                        <TextInput placeholder='Search Service' style={{ fontSize: 18, paddingLeft: 18 }} />
+                        <TextInput placeholder='Search Service' style={{ fontSize: 18, paddingLeft: 18 }} onChangeText={(val) =>setSearch(val)}/>
                     </View>
                     <View>
-                        <TouchableOpacity style={{ backgroundColor: "orange", padding: 9, borderRadius: 12, marginRight: 5 }}>
-                            <Text style={{ color: 'white', fontSize: 15 }}>Search</Text>
+                        <TouchableOpacity style={{ backgroundColor:Colors.purple, padding: 9, borderRadius: 12, marginRight: 5 }}>
+                            <Text style={{ color:Colors.white, fontSize: 15 }}>Search</Text>
                         </TouchableOpacity>
                     </View>
 
                 </View>
                 <FlatList
-                    data={Data}
-                    keyExtractor={Data => Data.id.toString()}
+                    data={data.filter((item)=>{if(item.serviceName.includes(search)){return item}})}
+                    keyExtractor={data => data._id.toString()}
+                    ListEmptyComponent={()=>{
+                        return (
+                            <View>
+                                <Text style={{color:Colors.purple}}>No data found</Text>
+                            </View>
+                        );
+                    }}
                     renderItem={({ item }) => (
                         <View style={{ flex: 1 }}>
-                            <View style={{ flexDirection: 'row', marginBottom: 10, alignItems: 'center', backgroundColor: 'white', borderRadius: 12, height: 80, flexWrap: 'wrap', alignContent: 'center' }}>
+                            <View style={{ flexDirection: 'row', marginBottom: 10, alignItems: 'center', backgroundColor: 'white', borderRadius: 12, height: 80, flexWrap: 'wrap' }}>
                                 <View>
-                                    <Image source={item.pic} style={{ width: 50, height: 50, borderRadius: 50, marginLeft: 5 }} />
+                                    <Image source={{uri:item.pic}} style={{ width: 50, height: 50, borderRadius: 50, marginLeft: 5 }} />
                                 </View>
                                 <View style={{width:270,marginLeft:10}}>
-                                    <TouchableOpacity onPress={()=>navigation.navigate('serviceDetail')}>
-
-                                    <Text style={{ fontSize: 18 }}>{item.service}</Text>
+                                    <TouchableOpacity onPress={()=>navigation.navigate('ServiceDetail',{item})}>
+                                     <Text style={{ fontSize: 18,color:'black' }}>{item.serviceName}</Text>
                                     </TouchableOpacity>
                                    
                                 </View>
-                                <View style={{ width: 30 }}>
-                                    {item.del}
-                                </View>
+                                {/* <TouchableOpacity style={{ width: 30 }} >
+                                     <MaterialIcons name='delete' size={25}  style={{color:'gray'}}/>
+                                </TouchableOpacity> */}
                             </View>
-
-                        </View>)} />
+                            
+                        </View>)} 
+                    />
             </View>
-
-
         </View>
+    }</ScrollView>
     );
 };
 

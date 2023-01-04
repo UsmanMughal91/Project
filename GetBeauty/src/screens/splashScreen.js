@@ -1,20 +1,14 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, Text, StyleSheet,Image } from 'react-native';
+import Colors from '../Styles/Colors';
 
 // create a component
 const SplashScreen = () => {
     return (
-        <View style={{flex:1}}> 
-        <View style={{ flex: 1, justifyContent: 'center',alignItems:'center',backgroundColor:'white'}}> 
-            
-        <Image source={require('../assests/images/logoo.png')}style={{width:300,height:300}}/>
-           <View style={{marginHorizontal:30}}>
-
-                  
-            </View>    
-          
-        </View>
+       
+        <View style={styles.container}>
+            <Image source={require("../assests/images/logo1.png")}  resizeMode={"center"}/>
         </View>
     );
 };
@@ -22,10 +16,9 @@ const SplashScreen = () => {
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-       
+        flex: 1,  
+        alignSelf:"center",
+        justifyContent:"center"
     },
 });
 

@@ -8,6 +8,7 @@ import ParlorList from '../screens/SalonBooking/ParlorList';
 import Setting from '../screens/SalonBooking/Setting'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Appointment from '../screens/SalonBooking/Appointment';
+import UserProfile from "../screens/SalonBooking/UserProfile"
 
 const BottomTab = createBottomTabNavigator();
 
@@ -15,46 +16,52 @@ const BottomTab = createBottomTabNavigator();
 const SalonAppTabs = () => {
     return (
      
-        <BottomTab.Navigator initialRouteName='ParlorList' screenOptions={{headerShown:false}} >
+        <BottomTab.Navigator initialRouteName='ParlorList' screenOptions={{
+            tabBarInactiveBackgroundColor: "#9932cc",
+            tabBarActiveBackgroundColor: "#7a28a3",
+            tabBarInactiveTintColor: "white",
+            tabBarActiveTintColor: "white",
+            tabBarIconStyle: { marginTop: 4 },
+            tabBarLabelStyle: { fontSize: 12, color: 'white', paddingBottom: 3 },
+            tabBarStyle: { height: 50, position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 4, borderTopRightRadius: 12,},
+            style: { borderColor: '#011f3b'},
+            headerShown: false,
+            unmountOnBlur: true,
+        }}>
                 <BottomTab.Screen name='ParlorList' component={ParlorList}
                     options={{   
-                    tabBarLabel: ({focused})=>{
-                        return<Text style={{color:focused? 'orange': 'grey',} }>Home</Text>
-                    },
-                         tabBarIcon:({focused})=>{
-                            return <MaterialIcons name="home" size={25} color={focused ? 'orange' : 'grey'}/>
-                         }
+                    tabBarLabel: "Home",
+                    tabBarIcon:({color,size})=>(
+                        <MaterialIcons name="home" size={25} style={{marginTop:1}} color={"white"}/>
+                    ),
                           }} />
 
                 <BottomTab.Screen name='Search' component={Search}
                 options={{
-                    tabBarLabel: ({ focused }) => {
-                        return <Text style={{ color: focused ? 'orange' : 'grey', }}>Search</Text>
-                    },
-                    tabBarIcon: ({ focused }) => {
-                        return <MaterialIcons name="search" size={25} color={focused ? 'orange' : 'grey'} />
-                    }
-                }}/>
+                    tabBarLabel: "Search",
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialIcons name="search" size={25} color={"white"} />
+                    ),
+                }}
+                />
             <BottomTab.Screen name='Appointment' component={Appointment}
                 options={{
-                    tabBarLabel: ({ focused }) => {
-                        return <Text style={{ color: focused ? 'orange' : 'grey', }}>Appointment</Text>
-                    },
-                    tabBarIcon: ({ focused }) => {
-                        return <MaterialIcons name="event-note" size={25} color={focused ? 'orange' : 'grey'} />
-                    }
-                }} />
+                    tabBarLabel: "Appointment",
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialIcons name="event-note" size={25} color={"white"} />
+                    ),
+                }}
+               />
                    
 
-                <BottomTab.Screen name='Setting' component={Setting}
+                <BottomTab.Screen name='UserProfile' component={UserProfile}
                 options={{
-                    tabBarLabel: ({ focused }) => {
-                        return <Text style={{ color: focused ? 'orange' : 'grey', }}>Settings</Text>
-                    },
-                    tabBarIcon: ({ focused }) => {
-                        return <Ionicons name="settings" size={25} color={focused ? 'orange' : 'grey'} />
-                    }
-                }}/>
+                    tabBarLabel: "Profile",
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialIcons name="person" size={25} color={"white"} />
+                    ),
+                }}
+               />
                    
     
             </BottomTab.Navigator>

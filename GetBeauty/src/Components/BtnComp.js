@@ -1,6 +1,8 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, Text, StyleSheet,TouchableOpacity } from 'react-native';
+import Colors from '../Styles/Colors';
+import Font from '../Styles/Font';
 
 // create a component
 const BtnComp = ({
@@ -8,10 +10,7 @@ const BtnComp = ({
     btnStyle,
     onPress,
     btnTextS,
-    isDisable = false,
-    
-    
-    
+    isDisable = false, 
 }) => {
     return (
         <View>
@@ -31,14 +30,14 @@ const BtnComp = ({
 // define your styles
 const styles = StyleSheet.create({
     btnStyle: { 
-        backgroundColor: 'orange',
+        backgroundColor: Colors.purple,
         borderRadius: 12,
-        padding: 7,
+        padding: 5,
         
     },
     btnTextS:{
-        color: 'white',
-        fontSize: 20,
+        color:Colors.white,
+        fontSize:Font.h1,
         fontWeight: 'bold',
         textAlign:'center'
     },

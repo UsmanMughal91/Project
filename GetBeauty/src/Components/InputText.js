@@ -1,8 +1,8 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, Text, StyleSheet,TextInput, TouchableOpacity } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import Colors from '../Styles/Colors';
+import Font from '../Styles/Font';
 // create a component
 const InputText = ({
     onChangeText,
@@ -11,28 +11,33 @@ const InputText = ({
     secureTextEntry,
     keyboardType,
     Icons,
-    onPress
+    onPress,
+    value,
+    multiline,
+    inputstyle,
+    icon,
+    icons
 }) => {
 
-
- 
     return (
         <View style={styles.container}>
-            <View style={styles.Design}>
-                <View>
+            <View style={{...styles.Design,...inputstyle}}>
+                <View style={{...styles.icon,...icon}}>
                     {Icon}
                 </View>
               
-                    <TextInput placeholder={placeholder} style={{ flex: 1, paddingLeft: 10, fontSize: 20, }}
+                    <TextInput placeholder={placeholder} style={{ flex: 1, paddingLeft: 10, fontSize:Font.h1, }}
                         onChangeText={onChangeText}
                         secureTextEntry={secureTextEntry}
                         keyboardType={keyboardType}
                         onPress={onPress}
+                        value={value}
+                        multiline={multiline}
                     />
              
               
-                <View>
-                    <TouchableOpacity onPress={onPress}>
+                <View style={{ ...styles.icons, ...icons }}>
+                    <TouchableOpacity onPress={onPress} >
                         {Icons}
                     </TouchableOpacity>
                    
@@ -45,12 +50,12 @@ const InputText = ({
 // define your styles
 const styles = StyleSheet.create({
     container: {
-    
+
     },
     Design: {
         flexDirection: "row",
-        alignItems: 'center',
-        backgroundColor: 'white',
+        alignItems:'center',
+        backgroundColor: Colors.white,
         borderRadius: 12,
         paddingLeft: 10,
         paddingRight:10,

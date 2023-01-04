@@ -1,10 +1,19 @@
 //import liraries
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { View, Text, StyleSheet ,FlatList,Image,TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Heading from '../../Components/Heading';
+import { getToken } from '../../../services/AsyncStorage';
+import Header from '../../Components/Header';
+import Loader from '../../Components/Loader';
+import H1 from '../../Components/H1';
+import Colors from '../../Styles/Colors';
+import Font from '../../Styles/Font';
+
 // create a component
 const Appointment = ({navigation}) => {
+    const [data,setdata] = useState()
+    const [loading,setloading] = useState(true)
     const DATA = [
         {
             id: 1,
@@ -56,43 +65,78 @@ const Appointment = ({navigation}) => {
         },
 
     ]
+
+    const loadRequests = async (token) =>{
+        const option = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                {
+                    token:token
+                }
+            )
+        }
+        try {
+            await fetch('http://192.168.197.7:8000/api/Expert/loadRequests',option)
+            .then((res)=>res.json())
+            .then((d) => {
+                setdata(d.data),setloading(false)
+            })
+            .catch(err => console.log(err))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(()=>{
+        (   async () => {
+            const token = await getToken() 
+            loadRequests(token);
+        })();
+    },[])
     return (
-        <View style={styles.container}>
-            <View style={{ width: 40 }}>
-                <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-            </View>
+        <View>
+            <Header onPress={() => navigation.goBack()} />
+            
+       <View style={styles.container}>
             <Heading text={"Appointment History"}/>
-            <View style={{marginTop:30}}>
-                <Text style={{ fontSize: 20, color: "black", fontWeight: "600" }}>Recent Service</Text>
+           
 
-            </View>
-            <FlatList
+                
+                {loading && <Loader viewStyle={{ marginTop: 250 }} />}
+         
+                {data &&   <FlatList
 
-                data={DATA}
-                keyExtractor={DATA => DATA.id.toString()}
+                data={data.filter((item)=>{if(item.status !== "Requested") return item })}
+                keyExtractor={data => data._id}
                 renderItem={({ item }) => (
                     <View style={{ flex: 1, }}>
 
                         <View style={{ flexDirection: 'row', marginTop: 15, marginBottom: 15}}>
                             <View>
-                                <Image source={item.images}
+                                <Image source={{uri:item.user.pic}}
                                     style={{ borderRadius: 40, width: 50, height: 50 }}
                                 />
                             </View>
-                            <View style={{ marginLeft: 10, width: "50%",}}>
-                                <Text style={{ color: 'black', fontSize: 18 }}>{item.Name}</Text>
-                                <Text>{item.date}</Text>
-                               
-                            </View>
-                           <View style={{marginLeft:30}}>
-                                <Text style={{ color: 'black', fontSize: 18 }}>{item.pkr}</Text>
-                                <Text>{item.status}</Text>
+                            <TouchableOpacity style={{ marginLeft: 10, width: 210 }} onPress={() => navigation.navigate('CompleteOrder', { item })}>
+                                <Text style={{ color:Colors.black, fontSize:Font.list}}>{item.user.name}</Text>
+                                <Text>{item.date}</Text> 
+                                <Text>{item.user.name}</Text>  
+                            </TouchableOpacity>
+                           <View style={{marginLeft:30,alignSelf:"center",backgroundColor:Colors.grey,padding:2,borderRadius:12,}}>
+                                <Text style={{color:Colors.purple}}>{item.status}</Text>
+                                
                            </View>
                         </View>
 
                     </View>
 
-                )} />
+                )} />}
+        </View>
+
         </View>
     );
 };
@@ -100,7 +144,6 @@ const Appointment = ({navigation}) => {
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
      margin:20
     },
 });

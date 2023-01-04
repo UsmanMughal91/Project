@@ -5,7 +5,7 @@ import Login from '../screens/SalonBooking/Login';
 import SignUp from '../screens/SalonBooking/SignUp';
 import Services from '../screens/SalonBooking/Services';
 import Location from '../screens/Location';
-import splashScreen from '../screens/SplashScreen';
+import SplashScreen from '../screens/SplashScreen';
 import EditUserProfileC from '../screens/SalonBooking/EditUserProfileC';
 import Booking from '../screens/SalonBooking/Booking';
 import Payment from '../screens/SalonBooking/Payment';
@@ -16,6 +16,10 @@ import ChangePass from '../screens/SalonBooking/ChangePass';
 import SalonAppTabs from './SalonAppTabs';
 import ForgotPass from '../screens/SalonBooking/ForgotPass';
 import ServiceDetail from '../screens/SalonBooking/ServiceDetail';
+import SalonAppDrawer from "../Navigations/SalonAppDrawer";
+import CustomDrawer from '../Components/CustomDrawer';
+import ResetPass from '../screens/SalonBooking/ResetPass';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -27,12 +31,12 @@ const SalonAppStack = () => {
     useEffect(() => {
         setTimeout(() => {
             setshowsplashScreen(false);
-        }, 3000);
+        }, 1000);
     }, [])
     return (
 
-        <Stack.Navigator initialRouteName='spashScreen' screenOptions={{ headerShown: false }}>
-            {showsplashScreen ? (<Stack.Screen name="splashScreen" component={splashScreen} />)
+        <Stack.Navigator initialRouteName='SplashScreen' screenOptions={{ headerShown: false }}>
+            {showsplashScreen ? (<Stack.Screen name="SplashScreen" component={SplashScreen} />)
                 : null}
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="SignUp" component={SignUp} />
@@ -48,6 +52,10 @@ const SalonAppStack = () => {
             <Stack.Screen name="ChangePass" component={ChangePass} />
             <Stack.Screen name="ForgotPass" component={ForgotPass} />
             <Stack.Screen name="ServiceDetail" component={ServiceDetail} />
+            <Stack.Screen name="ResetPass" component={ResetPass} />
+           
+           
+
         </Stack.Navigator>
 
     );

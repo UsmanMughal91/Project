@@ -1,11 +1,14 @@
 import UserModel from '../models/User.js'
+import ServiceModel from '../models/Services.js'
+import BookingModel from '../models/Booking.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import transporter from '../config/emailConfig.js'
+import ExpertModel from '../models/Expert.js'
 
 class userController {
     static userRegistration = async (req, res) => {
-        const { name, email, password, password_confirmation } = req.body
+        const { name, email, password, password_confirmation,phone,address,pic } = req.body
         const user = await UserModel.findOne({ email: email })
         if (user) {
             res.send({ "status": "failed", "message": "Email already exists" })
@@ -19,6 +22,10 @@ class userController {
                             name: name,
                             email: email,
                             password: hashPassword,
+                            phone: phone,
+                            address: address,
+                            pic: pic
+
                         
                         })
                         await doc.save()
@@ -135,7 +142,119 @@ class userController {
             res.send({ "status": "failed", "message": "Invalid Token" })
         }
     }
-    
+    static loadservices = async (req, res) => {
+        const id = req.body.id    
+        console.log(id)
+        try {
+            const user = ServiceModel.find({id:id}, function (err, docs) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    res.send({ "status": "success", "data": docs })
+                }
+            });
+        } catch (error) {
+            console.log(error)
+            res.send({ "status": "failed", "message": "failed to get list" })
+        }
+    }
+
+    static booking = async (req,res) =>{
+        const data = req.body
+        const token = req.body.token
+        var docs = JSON.parse(atob(token.split('.')[1]));
+        const user = await UserModel.findById(docs.userID)
+        const expert = await ExpertModel.findById(data.expertID)
+        console.log(req.body,user)
+        try {
+            const doc = new BookingModel({
+                userid:user._id,
+                expert: expert,
+                user: user,
+                service: data.service,
+                expertID: data.expertID,
+                date: data.date,
+                time:data.time,
+                method:data.method,
+                status:data.status,
+            })
+            await doc.save()
+            res.send({ "status": "success", message: "data saved successfully" })
+        } catch (error) {
+            res.send({ "status": "failed", message: "failed to save data" })
+            
+        }
+        
+
+    }
+
+    static loadRequests = async (req, res) => {
+        console.log(req.body)
+        const token = req.body.token
+        var decrypt = JSON.parse(atob(token.split('.')[1]));
+        const user = await UserModel.findById({_id:decrypt.userID })
+        console.log(user)
+        try {
+             BookingModel.find({userid:user._id}, function (err, docs) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    res.send({ "status": "success", "data": docs })
+                }
+            });
+        } catch (error) {
+            console.log(error)
+            res.send({ "status": "failed", "message": "failed to get list" })
+        }
+    }
+    static loadprofile = async (req, res) => {
+        console.log('loadprofile')
+        const token = req.body.token
+        var data = JSON.parse(atob(token.split('.')[1]));
+        try {
+            const docs = await UserModel.findById(data.userID)
+            if (docs) {
+                res.send({ "status": "success", "data": docs })
+            } else {
+                res.send({ "status": "failed", "message": "user not found" })
+
+            }
+
+        } catch (error) {
+            console.log(error)
+            res.send({ "status": "failed", "message": "failed to get user" })
+        }
+    }
+    static updateprofile = async (req, res) => {
+        const data = req.body
+        const token = req.body.token
+        var d = JSON.parse(atob(token.split('.')[1]));
+        try {
+            const user = UserModel.findByIdAndUpdate(d.userID,
+                {
+                    name: data.name,
+                    parlourName: data.parlourName,
+                    address: data.address,
+                    phone: data.phone,
+                    pic: data.pic,
+                    about: data.about, 
+                }, function (err, docs) {
+                    if (err) {
+                        console.log(err)
+                    }
+                    else {
+                        res.send({ "status": "success", "message": "Profile update successfully" })
+                    }
+                })
+            console.log(user)
+        } catch (error) {
+            console.log(error)
+            res.send({ "status": "failed", "message": "failed to get list" })
+        }
+    }
+
 }
 
 export default userController

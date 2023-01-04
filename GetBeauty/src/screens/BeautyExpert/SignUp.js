@@ -1,7 +1,6 @@
 //import liraries
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ImageBackground, Alert } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import BtnComp from '../../Components/BtnComp';
@@ -12,6 +11,9 @@ import Toast from 'react-native-toast-message';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import Colors from '../../Styles/Colors';
+import Font from '../../Styles/Font';
 // create a component
 const SignUp = ({ navigation }) => {
 
@@ -27,21 +29,15 @@ const SignUp = ({ navigation }) => {
     const [pic, setpic] = useState(null)
    
 
-const pickImage = ( ) =>{
-
+const pickImage = () =>{
     launchImageLibrary({quality:0.5},(fileobj)=>{
-        const uploadTask =storage().ref().child(`/expertprofile/${Date.now()}`).putFile(fileobj.assets[0].uri)
+        const uploadTask =storage().ref().child(`/profile/${Math.floor((Math.random() * 1000000000) + 1)}`).putFile(fileobj.assets[0].uri)
         uploadTask.on('state_changed',
             (snapshot) => {
               
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 if(progress===100){
-                    Toast.show({
-                        type: 'done',
-                        position: 'top',
-                        topOffset: 0,
-                        text1: "Image uploaded successfully"
-                    })
+                    console.log('image uploaded')
                 } 
                        
             }, 
@@ -49,15 +45,12 @@ const pickImage = ( ) =>{
               alert("error uploading image")
             },
             () => {
-               
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                     setpic(downloadURL)
                 });
             }
         );
-
-    })
-}
+    })}
 
 
 
@@ -90,7 +83,7 @@ const pickImage = ( ) =>{
     }
 
     const handleform = async () => {
-
+        
         try {
             const option = {
                 method: 'POST',
@@ -112,12 +105,11 @@ const pickImage = ( ) =>{
                     }
                 )
             }
-            await fetch('http://192.168.10.7:8000/api/Expert/register', option)
+            await fetch('http://192.168.10.8:8000/api/Expert/register', option)
                 .then(res => res.json())
                 .then(d => setdata(d))
                 .catch(err => console.log(err))
             if (data.status === "success") {
-
                 clearTextInput()
                 navigation.navigate("LoginExpert")
             } else {
@@ -139,13 +131,9 @@ const pickImage = ( ) =>{
 
     return (
         <ScrollView style={{ flex: 1, margin: 20 }}>
-
-            <View style={{ width: 40 }}>
-                <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-            </View>
             <Toast config={toastConfig} />
             <View style={{ justifyContent: "center", alignContent: "center", alignSelf: "center" }}>
-                <Image source={require('../../assests/images/logoo.png')} style={{ width: 250, height: 250 }} />
+                <Image source={require('../../assests/images/logo2.png')} resizeMode={"center"} />
             </View>
             <Heading text={"Signup"} />
 
@@ -176,7 +164,7 @@ const pickImage = ( ) =>{
                     onChangeText={setemail}
                     keyboardType="email-address" />
 
-                <InputText Icon={<MaterialCommunityIcons name="lock" size={25} />}
+                <InputText Icon={<MaterialCommunityIcons name="lock" size={25}  />}
                     placeholder={"Password"}
                     onChangeText={setpassword}
                     secureTextEntry={true}
@@ -191,23 +179,20 @@ const pickImage = ( ) =>{
             <View style={{ alignItems: "center", marginTop: 30 }}>
                 <TouchableOpacity onPress={pickImage}>
 
-                    <Image source={{ uri: pic }}
-                        resizeMode="cover" style={{ height: 140, width: 140, borderRadius: 50, backgroundColor: "white" }} />
+                    <Image source={pic ? {uri:pic} :
+                    require('../../assests/images/upload.png')}
+                        resizeMode="cover" style={{ height: 140, width: 140, borderRadius: 50, backgroundColor:Colors.white }} />
                 </TouchableOpacity>
-                <Text style={{ paddingTop: 10, fontWeight: 'bold', fontSize: 20 }}>Add Pic</Text>
+                <Text style={{ paddingTop: 10, fontSize:Font.h1 }}>Add Pic</Text>
             </View>
-
-
-
-
             <BtnComp btnStyle={styles.btn}
                 btnText={'Create New Account'}
                 onPress={handleform}
             />
             <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-                <Text style={{ color: 'black', fontSize: 18 }}>Already have an account?</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('Login') }}>
-                    <Text style={{ color: 'orange', fontSize: 18 }}>Log In</Text>
+                <Text style={{ color:Colors.black, fontSize:Font.font }}>Already have an account?</Text>
+                <TouchableOpacity onPress={() => { navigation.navigate('LoginExpert') }}>
+                    <Text style={{ color:Colors.purple, fontSize:Font.font }}> Log In</Text>
                 </TouchableOpacity>
             </View>
 
