@@ -5,23 +5,17 @@ import { View ,Text} from "react-native"
 
 const toastConfig = {
     warning:({text1,props})=> (
-<View style={{height: 40 ,width:"100%",backgroundColor:'red',borderBottomLeftRadius:12,borderBottomRightRadius:12}}>
-    <View style={{marginTop:6}}>
-                <Text style={{ fontSize: 16, color: 'white', textAlign: 'center' }}>{text1}</Text>
-    </View>
-
-            
-    <Text>{props.uuid}</Text>
-
+        <View style={{ flex: 1, backgroundColor: "#FF6347", width: '100%', borderBottomLeftRadius: 20, borderBottomRightRadius: 20, padding:17 }}>
+    <View style={{alignItems:'center',justifyContent:"center"}}>
+    <Text style={{ fontSize: 18, textAlign: 'center',color:"white",fontWeight:'bold' }}>{text1}</Text>
+    </View>          
 </View>
     ),
-    done: ({ text1, props }) => (
-        <View style={{ height: 40, width: "100%", backgroundColor: 'green', borderBottomLeftRadius: 12, borderBottomRightRadius: 12 }}>
-            <View style={{ marginTop: 6 }}>
-                <Text style={{ fontSize: 16, color: 'white', textAlign: 'center' }}>{text1}</Text>
+    Done: ({ text1, props }) => (
+        <View style={{ flex: 1, backgroundColor: "green", width: '100%', borderBottomLeftRadius:20, borderBottomRightRadius:20,padding:17 }}>
+            <View style={{ alignItems: 'center', justifyContent: "center",alignSelf:"center" }}>
+                <Text style={{ fontSize: 18, textAlign: 'center', color: "white", fontWeight: 'bold' }}>{text1}</Text>
             </View>
-           
-            <Text>{props.uuid}</Text>
         </View>
     ),
 }

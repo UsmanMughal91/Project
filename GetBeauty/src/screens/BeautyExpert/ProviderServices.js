@@ -8,7 +8,7 @@ import { getToken } from '../../../services/AsyncStorage';
 import Loader from '../../Components/Loader';
 import Header from '../../Components/Header';
 import Colors from '../../Styles/Colors';
-
+import BaseUrl from '../../baseUrl/BaseUrl';
 // create a component
 const ProviderServices = ({ navigation }) => {
    const [data,setdata] = useState();
@@ -72,7 +72,8 @@ const ProviderServices = ({ navigation }) => {
             )
         }
         try {
-            await fetch('http://192.168.103.8:8000/api/Expert/loadservices',option)
+           
+            await fetch(`${BaseUrl.ExpertBaseurl}/loadservices`, option)
             .then((res)=>res.json())
             .then((d) => {
                 setdata(d.data);setloading(false)
@@ -90,13 +91,14 @@ const ProviderServices = ({ navigation }) => {
         })();
     },[])
     return (
-        <ScrollView>
+        <View style={{flex:1}}>
            
             <Header onPress={() => navigation.goBack()} />
+            <ScrollView>
             {loading && <Loader viewStyle={{ marginTop: 330 }} />}
         {data && 
             <View style={styles.container}>
-            <View style={{ flex: 1 }}>
+            <View >
              
                 <Heading text={"Services"}/>
 
@@ -122,8 +124,9 @@ const ProviderServices = ({ navigation }) => {
                         );
                     }}
                     renderItem={({ item }) => (
-                        <View style={{ flex: 1 }}>
-                            <View style={{ flexDirection: 'row', marginBottom: 10, alignItems: 'center', backgroundColor: 'white', borderRadius: 12, height: 80, flexWrap: 'wrap' }}>
+                       
+                            <View style={{  marginBottom: 10, backgroundColor: 'white', borderRadius: 12, height: 80, flexWrap: 'wrap',justifyContent:'center' }}>
+                            <View style={{ flexDirection: 'row' ,alignItems:"center"}}> 
                                 <View>
                                     <Image source={{uri:item.pic}} style={{ width: 50, height: 50, borderRadius: 50, marginLeft: 5 }} />
                                 </View>
@@ -133,23 +136,27 @@ const ProviderServices = ({ navigation }) => {
                                     </TouchableOpacity>
                                    
                                 </View>
+                            </View>
                                 {/* <TouchableOpacity style={{ width: 30 }} >
                                      <MaterialIcons name='delete' size={25}  style={{color:'gray'}}/>
                                 </TouchableOpacity> */}
                             </View>
                             
-                        </View>)} 
+                        )} 
                     />
             </View>
         </View>
-    }</ScrollView>
+    }
+            </ScrollView>
+    
+    </View>
     );
 };
 
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+      
         margin: 20
     },
     btn: {

@@ -1,15 +1,19 @@
 //import liraries
 import React, { Component, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native';
 import Heading from '../../Components/Heading';
 import { getToken } from '../../../services/AsyncStorage';
 import Header from '../../Components/Header';
 import Colors from '../../Styles/Colors';
 import Font from '../../Styles/Font';
-
+import BaseUrl from '../../baseUrl/BaseUrl';
+import Loader from '../../Components/Loader'
 // create a component
-const Appointment = ({ navigation }) => {
-    const [data,setdata] = useState()
+const Appointment = ({ navigation}) => {
+
+    const [data, setdata] = useState('')
+    const [loading, setloading] = useState(true)
+
     const Data = [
         {
             name: 'Sofiya beauty',
@@ -47,7 +51,7 @@ const Appointment = ({ navigation }) => {
             pkr: '9000 Rs'
         }
     ]
-    const loadRequests = async (token) =>{
+    const loadRequests = async (token) => {
         const option = {
             method: 'POST',
             headers: {
@@ -56,66 +60,77 @@ const Appointment = ({ navigation }) => {
             },
             body: JSON.stringify(
                 {
-                    token:token
+                    token: token
                 }
             )
         }
         try {
-            await fetch('http://192.168.103.8:8000/api/user/loadRequests',option)
-            .then((res)=>res.json())
-            .then((d) => {
-                setdata(d.data)
-                console.log(d)
-            })
-            .catch(err => console.log(err))
+
+            await fetch(`${BaseUrl.SalonBaseurl}/loadRequests`, option)
+                .then((res) => res.json())
+                .then((d) => {
+                    setdata(d.data)
+                  
+                    setloading(false)
+                })
+                .catch(err => console.log(err))
         } catch (error) {
             console.log(error)
         }
     }
 
-    useEffect(()=>{
-        (   async () => {
-            const token = await getToken() 
+    useEffect(() => {
+        (async () => {
+            const token = await getToken()
             loadRequests(token);
         })();
-    },[])
+    }, [])
+
+
     return (
-        <View>
-                    <Header onPress={() => navigation.goBack()} />
-                    
-        
-        <View style={styles.container}>
+        <View style={{flex:1}}>
+            <Header text={"no"} onPress={() => navigation.goBack()} />
+            <ScrollView> 
+            <View style={styles.container}>
                 <Heading text={"Appointment History"} />
-            <View style={{ flexDirection: 'row', backgroundColor:Colors.purple, borderRadius: 12, height: 40, justifyContent: 'space-between', alignItems: 'center', marginTop: 20 }}>
-                <Text style={{ fontSize:Font.font, color: Colors.white, marginLeft: 10 }}>Beauty Experts</Text>
+                <View style={{ backgroundColor: Colors.purple, marginTop: 20, flexDirection: 'row', alignItems: "center", justifyContent: 'center', justifyContent: "space-between", borderRadius: 12 }}>
+                    <Text style={{ fontSize: Font.font, color: Colors.white, marginLeft: 10 }}>Beauty Experts</Text>
                     <Text style={{ fontSize: Font.font, color: Colors.white, marginLeft: 40 }}>Description</Text>
                     <Text style={{ fontSize: Font.font, color: Colors.white, marginRight: 10 }}>Status</Text>
+                </View>
+                {loading && <Loader />}
+                {data && <FlatList
+                    data={data}
+                    keyExtractor={data => data._id}
+                    renderItem={({ item }) => (
+                        <View style={{ flexDirection: 'row', flex: 1, marginTop: 20, marginBottom: 10}}>
+                            <View>
+                                <Image source={{ uri: item.expert.pic }} style={{ width: 50, height: 50, borderRadius: 50 }} />
+
+                            </View>
+                            <View style={{ width: 130, }}>
+                                <Text style={{ fontSize: Font.list, color: Colors.black, marginLeft: 10 }}>{item.expert.parlourName}</Text>
+                                <Text style={{ marginLeft: 10 }}>{item.expert.name}</Text>
+                            </View>
+                            <View style={{ marginLeft: 10, width: 100, }}>
+                                <Text >{item.date}</Text>
+                                <Text >{item.service.servicePrice} Pkr</Text>
+                            </View>
+
+
+                            <View style={{alignSelf:'center'}} >
+                                <View style={{ marginLeft: 10, backgroundColor: Colors.grey, borderRadius: 12, width: 70, alignItems: 'center', justifyContent: 'center', height: 25, alignSelf: "center" }}>
+                                    <Text style={{ textAlign: 'center', fontSize: 12, color: Colors.purple }}>{item.status}</Text>
+                                </View>
+                                {item.status === "Accepted" ? <TouchableOpacity style={{ marginLeft: 10, backgroundColor: Colors.grey, borderRadius: 12, width: 70, alignItems: 'center', justifyContent: 'center', height: 25, alignSelf: "center", marginTop: 10 }}
+                                    onPress={() => navigation.navigate('Payment',{item})}>
+                                    <Text style={{ textAlign: 'center', fontSize: 12, color: Colors.purple }}>Payment</Text>
+                                </TouchableOpacity> : null}  
+                            </View>
+                        </View>)
+                    } />}
             </View>
-                {data &&  <FlatList
-                data={data}
-                keyExtractor={data=>data._id}
-                renderItem={({ item }) => (
-                    <View style={{ flexDirection: 'row', flex: 1, marginTop: 20, marginBottom: 10 }}>
-                        <View>
-                            <Image source={{uri:item.expert.pic}} style={{ width: 50, height: 50, borderRadius: 50 }} />
-
-                        </View>
-                        <View style={{ width: 130 }}>
-                            <Text style={{ fontSize:Font.list, color:Colors.black, marginLeft: 10 }}>{item.expert.name}</Text>
-                            <Text style={{ marginLeft: 10 }}>{item.expert.parlourName}</Text>
-                        </View>
-                        <View style={{  marginLeft: 10, width: 100, }}>
-                            <Text >{item.date}</Text>
-                            <Text >{item.service.servicePrice} Pkr</Text>
-                        </View>
-                        <View style={{ marginLeft: 10,backgroundColor:Colors.grey,borderRadius:12,width:70,alignItems:'center',justifyContent:'center',height:30,alignSelf:"center"}}>
-
-                            <Text style={{textAlign:'center',fontSize:12,color:Colors.purple}}>{item.status}</Text>
-
-                        </View>
-                    </View>)
-                } /> }
-        </View>
+            </ScrollView>
         </View>
     );
 };
@@ -125,6 +140,7 @@ const styles = StyleSheet.create({
     container: {
         margin: 20
     },
+
 });
 
 //make this component available to the app

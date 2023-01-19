@@ -1,19 +1,30 @@
 //import liraries
-import React, { Component } from 'react';
+import React, { Component,useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Provider } from 'react-redux';
 import Home from './src/screens/Home'
 import { store } from './store';
+import {requestUserPermission,notificationListener} from "./services/Notification"
+import ForegroundHandler from './services/ForegroundHandler';
+
+
 
 // create a component
 const App = () => {
+
+
+
+  useEffect(() => {
+    requestUserPermission()
+    notificationListener()
+  }, [])
   return (
-    // <View style={styles.container}>
-    //  <Home/>
-    // </View>
-    <Provider store={store}>
-      <Home/>
-    </Provider>
+
+    
+    <View style={styles.container}>
+      <ForegroundHandler/>
+     <Home/>
+    </View>
   );
 };
 

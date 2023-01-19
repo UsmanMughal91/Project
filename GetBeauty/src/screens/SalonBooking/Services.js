@@ -1,116 +1,3 @@
-// //import liraries
-// import React, { useState } from 'react';
-// import { View, Text, StyleSheet,TouchableOpacity,Image, ScrollView,TextInput,FlatList } from 'react-native';
-// import Ionicons from 'react-native-vector-icons/Ionicons'
-// import Heading from '../../Components/Heading'
-// import BtnComp from '../../Components/BtnComp';
-// // create a component
-
-// const Services = ({navigation}) => {
-
-//     const Data = [
-//         {
-//             id: 1,
-//             service: 'Hair Cut',
-//             pic: require('../../assests/images/a.jpg'),
-//         },
-//         {
-
-//             id: 2,
-//             service: 'Urgent faical',
-//             pic: require('../../assests/images/b.jpg'),
-//         },
-//         {
-
-//             id: 3,
-//             service: 'Party makeup',
-//             pic: require('../../assests/images/c.jpg'),
-//         },
-//         {
-
-//             id: 4,
-//             service: 'Bridel',
-//             pic: require('../../assests/images/d.jpg'),
-//         },
-//         {
-
-//             id: 5,
-//             service: 'Hair color',
-//             pic: require('../../assests/images/a.jpg'),
-//         },
-//         {
-//             id: 6,
-//             service: 'Eye Style',
-//             pic: require('../../assests/images/b.jpg'),
-//         }
-//     ]
-//     return (
-//         <View style={styles.container}>
-//             <View style={{flex:1}}> 
-//             <View style={{ width: 40 }}>
-//                 <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-//             </View>
-//             <Heading text={"Services"}/>
-//                 <View style={{ marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: 'space-between', backgroundColor: 'white', borderRadius: 12, marginTop: 20 }}>
-//                     <View>
-//                         <TextInput placeholder='Search Service' style={{ fontSize: 18, paddingLeft: 18 }} />
-//                     </View>
-//                     <View>
-//                         <TouchableOpacity style={{ backgroundColor: "orange", padding: 9, borderRadius: 12, marginRight: 5 }}>
-//                             <Text style={{ color: 'white', fontSize: 15 }}>Search</Text>
-//                         </TouchableOpacity>
-//                     </View>
-
-//                 </View>
-//                 <ScrollView>
-
-                
-//                 <FlatList
-//                     data={Data}
-//                     keyExtractor={Data => Data.id.toString()}
-//                     renderItem={({ item }) => (
-//                         <TouchableOpacity activeOpacity={0.6} onPress={()=>navigation.navigate('ServiceDetail')}>
-//                         <View style={{ flex: 1 }}>
-//                             <View style={{ flexDirection: 'row', marginBottom: 10, alignItems: 'center', backgroundColor: 'white', borderRadius: 12, height: 80}}>
-//                                 <View>
-//                                     <Image source={item.pic} style={{ width: 60, height: 60, borderRadius: 50, marginLeft: 5 }} />
-//                                 </View>
-//                                 <View style={{marginLeft:10}}>
-//                                     <Text style={{ fontSize: 18 }}>{item.service}</Text>
-//                                 </View>
-//                                 <View style={{alignItems:'center'}}>
-                                  
-//                                     <Text style={{ fontWeight: "bold", fontSize: 15, marginRight: 10 }}>{item.Pr}</Text>
-                                   
-//                                 </View>
-                              
-//                             </View>
-
-//                         </View>
-//                         </TouchableOpacity>)} />
-                    
-//                 </ScrollView>
-//             </View> 
-        
-//             </View> 
-//     );
-// };
-
-// // define your styles
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//       margin:20
-//     },
-//     btn:{
-//         marginTop:20,
-//     },
-   
-// });
-
-// //make this component available to the app
-// export default Services;
-
 
 //import liraries
 import React, { useEffect, useState } from 'react';
@@ -119,52 +6,21 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Heading from '../../Components/Heading';
 import { getToken } from '../../../services/AsyncStorage';
-
+import Colors from '../../Styles/Colors';
+import Header from '../../Components/Header'
+import BaseUrl from "../../baseUrl/BaseUrl"
+import Loader from '../../Components/Loader';
 // create a component
 const Services = ({ navigation,route }) => {
     const id = route.params.id
+    const profile = route.params.profile
+   
+    
    const [data,setdata] = useState();
    const [search,setSearch] = useState("");
-    // const Data = [
-    //     {
-    //         id: 1,
-    //         service: 'Hair Cut',
-    //         pic: require('../../assests/images/b.jpg'),
-    //         del: <MaterialIcons name='delete' size={25} />
-    //     },
-    //     {
+    const [loading, setloading] = useState("true");
 
-    //         id: 2,
-    //         service: 'Urgent faical',
-    //         pic: require('../../assests/images/a.jpg'),
-           
-    //         del: <MaterialIcons name='delete' size={25}  />
-    //     },
-    //     {
-
-    //         id: 3,
-    //         service: 'Party makeup',
-    //         pic: require('../../assests/images/c.jpg'),
-           
-    //         del: <MaterialIcons name='delete' size={25}  />
-    //     },
-    //     {
-
-    //         id: 4,
-    //         service: 'Bridel',
-    //         pic: require('../../assests/images/d.jpg'),
-           
-    //         del: <MaterialIcons name='delete' size={25}  />
-    //     },
-    //     {
-
-    //         id: 5,
-    //         service: 'Hair color',
-    //         pic: require('../../assests/images/b.jpg'),
-           
-    //         del: <MaterialIcons name='delete' size={25}  />
-    //     }
-    // ]
+   
     const loadservices = async (id) =>{
         const option = {
             method: 'POST',
@@ -179,10 +35,12 @@ const Services = ({ navigation,route }) => {
             )
         }
         try {
-            await fetch('http://192.168.103.8:8000/api/user/loadservices',option)
+           
+            await fetch(`${BaseUrl.SalonBaseurl}/loadservices`,option)
             .then((res)=>res.json())
             .then((d) => {
                 setdata(d.data);
+                setloading(false)
             })
             .catch(err => console.log(err))
         } catch (error) {
@@ -193,31 +51,30 @@ const Services = ({ navigation,route }) => {
         loadservices(id)
     },[])
     return (
-        <>
-        {data && 
+        <View style={{flex:1}}>
+       <Header onPress={()=> navigation.goBack()}/>
+            <ScrollView> 
+            <Heading text={"Services"} />
+           
             <View style={styles.container}>
-            <View style={{ flex: 1 }}>
-                <View style={{ width: 40 }}>
-                    <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-                </View>
-                <Heading text={"Services"} />
-                <View style={{ marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: 'space-between', backgroundColor: 'white', borderRadius: 12, marginTop: 20 }}>
+                <View style={{ marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: 'space-between', backgroundColor: 'white', borderRadius: 12, }}>
                     <View>
                         <TextInput placeholder='Search Service' style={{ fontSize: 18, paddingLeft: 18 }} onChangeText={(val)=>{setSearch(val)}}/>
                     </View>
                     <View>
-                        <TouchableOpacity style={{ backgroundColor: "orange", padding: 9, borderRadius: 12, marginRight: 5 }}>
+                        <TouchableOpacity style={{ backgroundColor:Colors.purple, padding: 9, borderRadius: 12, marginRight: 5 }}>
                             <Text style={{ color: 'white', fontSize: 15 }}>Search</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
-                <FlatList
+                {loading && <Loader />}
+                    {data &&    <FlatList
                     data={data.filter((item)=>{if(item.serviceName.includes(search)){return item}})}
                     keyExtractor={data => data._id}
                     ListEmptyComponent={()=>{
                         return (
                             <View>
-                                <Text style={{color:'red'}}>No data found</Text>
+                                <Text style={{color:Colors.purple,textAlign:'center'}}>No Service found</Text>
                             </View>
                         );
                     }}
@@ -228,29 +85,28 @@ const Services = ({ navigation,route }) => {
                                     <Image source={{uri:item.pic}} style={{ width: 50, height: 50, borderRadius: 50, marginLeft: 5 }} />
                                 </View>
                                 <View style={{width:270,marginLeft:10}}>
-                                    <TouchableOpacity onPress={()=>navigation.navigate('ServiceDetail',{item})}>
+                                    <TouchableOpacity onPress={()=>navigation.navigate('ServiceDetail',{item,profile})}>
                                      <Text style={{ fontSize: 18,color:'black' }}>{item.serviceName}</Text>
                                     </TouchableOpacity>
                                    
                                 </View>
-                                <View style={{ width: 30 }}>
-                                    {item.del}
-                                </View>
+                               
                             </View>
 
-                        </View>)} />
-            </View>
+                        </View>)} />}
+           
 
 
         </View>
-    }</>
+            </ScrollView>
+   </View>
     );
 };
 
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+       
         margin: 20
     },
     btn: {

@@ -173,6 +173,7 @@ class ExpertController {
         var data = JSON.parse(atob(token.split('.')[1]));
         try {
             const docs = await ExpertModel.findById(data.userID) 
+            console.log(docs)
             if(docs){
             res.send({ "status": "success", "data": docs })
         } else {
@@ -188,6 +189,7 @@ class ExpertController {
 
     static updateprofile = async (req, res) => {
         const data = req.body
+        console.log("edit profile data",data)
         const token = req.body.token
         var d = JSON.parse(atob(token.split('.')[1]));
             try {
@@ -199,6 +201,12 @@ class ExpertController {
                         phone:data.phone,
                         pic:data.pic,
                         about:data.about,
+                        daysX:data.daysX,
+                        daysY: data.daysY,
+                        daysZ: data.daysZ,
+                        timeX:data.timeX,
+                        timeY:data.timeY,
+                        timeZ:data.timeZ
                 }, function (err,docs) {
                     if (err){
                         console.log(err)
@@ -230,10 +238,10 @@ class ExpertController {
                     pic: data.pic,
                 })
                 await doc.save()
-                res.status(201).send({ "status": "success", "message": "Service added successfully" })
+                res.status(201).send({ "status": "success", "message": "Service added Successfully" })
             } catch (error) {
                 console.log(error)
-                res.send({ "status": "failed", "message": "failed to add service" })
+                res.send({ "status": "failed", "message": "Failed to add service" })
             }
         } else {
             res.send({ "status": "failed", "message": "Service already exists" })
@@ -242,9 +250,12 @@ class ExpertController {
     static loadservices = async (req, res) => {
         console.log('req made')
         const token = req.body.token
+        console.log(req.body.token)
         var data = JSON.parse(atob(token.split('.')[1]));
+        console.log(data)
         try {
             const docs = ServiceModel.find({id:data.userID}, function (err, docs) {
+                console.log(docs)
                 if (err) {
                     console.log(err);
                 }

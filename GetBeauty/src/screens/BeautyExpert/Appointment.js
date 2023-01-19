@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useEffect, useState } from 'react';
-import { View, Text, StyleSheet ,FlatList,Image,TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet ,FlatList,Image,TouchableOpacity, ScrollView} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Heading from '../../Components/Heading';
 import { getToken } from '../../../services/AsyncStorage';
@@ -9,9 +9,10 @@ import Loader from '../../Components/Loader';
 import H1 from '../../Components/H1';
 import Colors from '../../Styles/Colors';
 import Font from '../../Styles/Font';
-
+import BaseUrl from '../../baseUrl/BaseUrl';
 // create a component
 const Appointment = ({navigation}) => {
+    const [refresh,setrefresh] = useState(false)
     const [data,setdata] = useState()
     const [loading,setloading] = useState(true)
     const DATA = [
@@ -80,7 +81,8 @@ const Appointment = ({navigation}) => {
             )
         }
         try {
-            await fetch('http://192.168.197.7:8000/api/Expert/loadRequests',option)
+         
+            await fetch(`${BaseUrl.ExpertBaseurl}/loadRequests`, option)
             .then((res)=>res.json())
             .then((d) => {
                 setdata(d.data),setloading(false)
@@ -96,16 +98,16 @@ const Appointment = ({navigation}) => {
             const token = await getToken() 
             loadRequests(token);
         })();
-    },[])
+    },[refresh])
     return (
         <View>
-            <Header onPress={() => navigation.goBack()} />
+            <Header  text="no" onPress={() => navigation.goBack()} />
             
        <View style={styles.container}>
             <Heading text={"Appointment History"}/>
            
 
-                
+                <View>
                 {loading && <Loader viewStyle={{ marginTop: 250 }} />}
          
                 {data &&   <FlatList
@@ -121,10 +123,10 @@ const Appointment = ({navigation}) => {
                                     style={{ borderRadius: 40, width: 50, height: 50 }}
                                 />
                             </View>
-                            <TouchableOpacity style={{ marginLeft: 10, width: 210 }} onPress={() => navigation.navigate('CompleteOrder', { item })}>
+                            <TouchableOpacity style={{ marginLeft: 10, width: 210 }} onPress={() => { if(item.status==="Pending"){navigation.navigate('CompleteOrder', { item,setrefresh }) }}}>
                                 <Text style={{ color:Colors.black, fontSize:Font.list}}>{item.user.name}</Text>
                                 <Text>{item.date}</Text> 
-                                <Text>{item.user.name}</Text>  
+                                <Text>{item.service.servicePrice}</Text>  
                             </TouchableOpacity>
                            <View style={{marginLeft:30,alignSelf:"center",backgroundColor:Colors.grey,padding:2,borderRadius:12,}}>
                                 <Text style={{color:Colors.purple}}>{item.status}</Text>
@@ -135,6 +137,7 @@ const Appointment = ({navigation}) => {
                     </View>
 
                 )} />}
+                </View>
         </View>
 
         </View>

@@ -8,6 +8,7 @@ import InputText from '../../Components/InputText';
 import { toastConfig } from '../../Styles/styles';
 import Toast from 'react-native-toast-message';
 import Header from '../../Components/Header';
+import BaseUrl from '../../baseUrl/BaseUrl'
 // create a component
 const ForgotPass = ({ navigation }) => {
 
@@ -34,7 +35,8 @@ const ForgotPass = ({ navigation }) => {
                         }
                     )
                 }
-                await fetch('http://192.168.155.7:8000/api/Expert/send-user-password-reset-email', option)
+             
+                await fetch(`${BaseUrl.ExpertBaseurl}/send-user-password-reset-email`, option)
                     .then(res => res.json())
                     .then(d =>{ setdata(d)
                         if (d.status === "success") {
@@ -42,7 +44,7 @@ const ForgotPass = ({ navigation }) => {
                             // await clearTextInput()
                            
                             Toast.show({
-                                type: 'done',
+                                type: 'Done',
                                 position: 'top',
                                 topOffset: 0,
                                 text1:d.message

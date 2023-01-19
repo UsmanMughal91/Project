@@ -12,6 +12,7 @@ import Loader from '../../Components/Loader'
 import Font from '../../Styles/Font';
 import Colors from '../../Styles/Colors';
 import H1 from '../../Components/H1'
+import BaseUrl from '../../baseUrl/BaseUrl';
 // create a component
 const UserProfile = ({ navigation }) => {
     const [data, setdata] = useState();
@@ -30,7 +31,8 @@ const UserProfile = ({ navigation }) => {
             )
         }
         try {
-            await fetch('http://192.168.103.8:8000/api/user/loadprofile', option)
+           
+            await fetch(`${BaseUrl.SalonBaseurl}/loadprofile`,option)
                 .then((res) => res.json())
                 .then((d) => { setdata(d.data); setloading(false) })
                 .catch(err => console.log(err))
@@ -45,10 +47,11 @@ const UserProfile = ({ navigation }) => {
         })();
     }, [])
     return (
-        <ScrollView>
-            <Header onPress={() => navigation.goBack()} />
+        <View style={{flex:1}}>
+            <Header text={"no"} onPress={() => navigation.goBack()} />
 
             <View style={styles.container}>
+                <ScrollView>
                 {loading && <Loader viewStyle={{marginTop:320}}/>}
                 {data && <View>
                     <Heading text={"My Profile"} />
@@ -72,8 +75,9 @@ const UserProfile = ({ navigation }) => {
                     <Text style={{ fontSize: Font.font, marginTop: 10 }}>{data.email}</Text>
 
                 </View>}
+                </ScrollView>
             </View>
-        </ScrollView>
+        </View>
     );
 };
 

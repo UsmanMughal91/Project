@@ -4,17 +4,19 @@ import { View, Text, StyleSheet,Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Heading from '../../Components/Heading'
 import BtnComp from '../../Components/BtnComp';
+import Header from '../../Components/Header';
+
 // create a component
 const ServiceDetail= ({navigation,route}) => {
      useEffect(()=>{
         console.log(route.params.item)
      },[])
     return (
-        <View style={styles.container}>
-            <View style={{ width: 40 }}>
-                <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-            </View>
-            <Heading text={"About Service"} />
+<View> 
+            <Header onPress={() => navigation.goBack()} />
+           
+        <View style={styles.container}>  
+                <Heading text={"About Service"} />
             <Image source={{uri:route.params.item.pic}}
            style={{height:200,width:"100%",borderRadius:12,marginTop:20}} />
             <Text style={{ fontSize: 20, fontWeight: '500' ,color:"black",marginTop:10}}>Discription</Text>
@@ -26,13 +28,14 @@ const ServiceDetail= ({navigation,route}) => {
                {route.params.item.servicePrice} Pkr
             </Text>
         </View>
+        </View>
     );
 };
 
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+      
        margin:20
     },
     btn:{

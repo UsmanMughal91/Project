@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView,Modal,Button } from 'react-native';
 //  import TextInput from '../Components/Textinput';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -13,15 +13,22 @@ import Toast from 'react-native-toast-message';
 import { storeToken } from '../../../services/AsyncStorage';
 import Colors from '../../Styles/Colors';
 import Font from '../../Styles/Font';
+import BaseUrl from '../../baseUrl/BaseUrl';
+import CustomModal from '../../Components/CustomModal';
+import { cos } from 'react-native-reanimated';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 // create a component
 
 const Login = ({ navigation }) => {
 
-    const [email, setemail] = useState(" ")
-    const [password, setpassword] = useState(" ")
+    const [email, setemail] = useState("Sajid@gmail.com")
+    const [password, setpassword] = useState("123")
     const [data, setdata] = useState("")
     const [show,setshow] = useState(false)
-    const [visible, setvisible] = useState(true)
+    const [visible, setvisible] = useState(false)
+   const [modalvisible,setmodalvisible] = useState(false)
 
     const clearTextInput = async() => {
         setemail('')
@@ -30,6 +37,9 @@ const Login = ({ navigation }) => {
 
     const handleform = async () => {
 
+
+    //    const res= await loginform()
+    //    console.log(res)
       if( email&& password){
           try {
               const option = {
@@ -45,58 +55,54 @@ const Login = ({ navigation }) => {
                       }
                   )
               }
-              await fetch('http://192.168.197.7:8000/api/user/login', option)
+             
+              await fetch(`${BaseUrl.SalonBaseurl}/login`,option)
                   .then(res => res.json())
                   .then(d =>{
-                    setdata(d)
+                    setdata(d); 
+                  
                     if (d.status === "success") {
-                         storeToken(d.token)  // store token in storage 
-                         clearTextInput()
-                        navigation.navigate("SalonAppDrawer")
+                     navigation.navigate("SalonAppStack")
+
+                        storeToken(d.token)
+                        console.log("token save hoa hy ",d.token)
+                  
+                         // store token in storage 
+                         clearTextInput()           
                     } 
-                    else(data.status === "failed")
+                    else
                     {
                         Toast.show({
                             type: 'warning',
                             position: 'top',
                             topOffset: 0,
-                            text1: d.message
+                            text1: d.message,
                         })
                     }
                 })
-                  .catch(err => console.log(err))
-                  
-              
+                  .catch(err => console.log(err))  
           } catch (error) {
               console.log(error)
           }
-         
-
       }else{
           Toast.show({
               type: 'warning',
               position: 'top',
               topOffset: 0,
-              text1: "All fields are required"
+              text1: "All fields are Required",
+              position:'absolute'
           })
       }
-       
-     
     }
 
     return (
-        
-        <ScrollView style={styles.container}>
-          
-           
+        <View>
             <Toast config={toastConfig} />
+        <View style={styles.container}>
+        
          <View style={{alignSelf:'center'}}>
-                <Image source={require('../../assests/images/logo1.png')}  resizeMode={"center"} style={{height:300}}/>
-
-         </View>
-
-         
-          
+                <Image source={require('../../assests/images/logo1.png')}  resizeMode={"center"} style={{height:200}}/>
+         </View>   
             <Heading text={"Login"} />
 
             <View style={{ marginTop: 20 }}>
@@ -124,14 +130,17 @@ const Login = ({ navigation }) => {
                 </View>
             </View>
 
-            <BtnComp onPress={handleform} btnStyle={styles.btn} btnText={"LOGIN"} />
+            <BtnComp onPress={handleform} btnStyle={{ marginTop: 30, }} btnText={"LOGIN"} />
             <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
                 <Text style={{ color:Colors.black, fontSize:Font.font }}>Don't have an account?</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
                     <Text style={{ color:Colors.purple, fontSize:Font.font}}> Sign up</Text>
                 </TouchableOpacity>
             </View>
-        </ScrollView>
+          
+        </View>
+
+        </View>
 
     );
 };
@@ -139,14 +148,9 @@ const Login = ({ navigation }) => {
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        marginTop:100,
         margin: 20,
-
     },
-    btn: {
-        marginTop: 30,
-    }
-
 })
 
 

@@ -10,14 +10,22 @@ import InputText from '../../Components/InputText';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import BtnComp from '../../Components/BtnComp';
 import { toastConfig } from '../../Styles/styles';
-import { storeToken } from '../../../services/AsyncStorage';
+import { storeToken, getToken, storLoginData } from '../../../services/AsyncStorage';
 import Toast from 'react-native-toast-message';
 import Font from '../../Styles/Font';
+import BaseUrl from '../../baseUrl/BaseUrl';
+
 // create a component
 const LoginExpert = ({ navigation }) => {
 
-    const [email, setemail] = useState(" ")
-    const [password, setpassword] = useState(" ")
+  
+    useEffect(() => {
+        getToken();
+
+    })
+
+    const [email, setemail] = useState("Sameer@gmail.com")
+    const [password, setpassword] = useState("123")
     const [data, setdata] = useState("")
     const [show, setshow] = useState(false)
     const [visible, setvisible] = useState(true)
@@ -26,7 +34,6 @@ const LoginExpert = ({ navigation }) => {
         setemail('')
         setpassword('')
     }
-
     const handleform = async () => {
         if (email && password) {
             try {
@@ -43,16 +50,17 @@ const LoginExpert = ({ navigation }) => {
                         }
                     )
                 }
-                await fetch('http://192.168.197.7:8000/api/Expert/login', option)
+                await fetch(`${BaseUrl.ExpertBaseurl}/login`, option)
                     .then(res => res.json())
                     .then((d) => {
                         setdata(d)
                         if (d.status === "success") {
+
                             storeToken(d.token)  // store token in storage 
                             clearTextInput()
-                            navigation.navigate("ExpertDrawer")
+                            navigation.navigate("BeautyExpertStack")
                         }
-                        else (d.status === "failed")
+                        else 
                         {
                             Toast.show({
                                 type: 'warning',
@@ -63,8 +71,6 @@ const LoginExpert = ({ navigation }) => {
                         }
                     })
                     .catch(err => console.log(err))
-
-                
             } catch (error) {
                 console.log(error)
             }
@@ -76,52 +82,49 @@ const LoginExpert = ({ navigation }) => {
                 text1: "All fields are required"
             })
         }
-
     }
-
     return (
-        <ScrollView style={styles.container}>
-
-        
+        <View >
             <Toast config={toastConfig} />
-            <View style={{alignSelf:"center"}}>
-                <Image source={require('../../assests/images/logo2.png')} resizeMode={"center"} style={{height:300}}/>
-            </View>
-            <Heading text={"Login"} />
+            <View style={styles.container}>
+                <View style={{ alignSelf: "center" }}>
+                    <Image source={require('../../assests/images/logo2.png')} resizeMode={"center"} style={{ height: 200 }} />
+                </View>
+                <Heading text={"Login"} />
+                <View style={{ marginTop: 20 }}>
+                    <InputText Icon={<MaterialCommunityIcons name="email" size={25} />}
+                        placeholder={'Email'}
+                        onChangeText={(val) => { setemail(val) }}
+                    />
+                    <InputText Icon={<MaterialCommunityIcons name="lock" size={25} />}
+                        placeholder={'Password'}
+                        secureTextEntry={visible}
+                        onChangeText={setpassword}
+                        Icons={<MaterialCommunityIcons name={show === false ? "eye-off-outline" : "eye-outline"} size={25}
+                            onPress={
+                                () => {
+                                    setvisible(!visible)
+                                    setshow(!show)
 
-            <View style={{ marginTop: 20 }}>
-                <InputText Icon={<MaterialCommunityIcons name="email" size={25} />}
-                    placeholder={'Email'}
-                    onChangeText={(val)=>{setemail(val)}}
-                />
-                <InputText Icon={<MaterialCommunityIcons name="lock" size={25} />}
-                    placeholder={'Password'}
-                    secureTextEntry={visible}
-                    onChangeText={setpassword}
-                    Icons={<MaterialCommunityIcons name={show === false ? "eye-off-outline" : "eye-outline"} size={25}
-                        onPress={
-                            () => {
-                                setvisible(!visible)
-                                setshow(!show)
+                                }} />}
+                    />
+                    <View style={{ alignItems: "flex-end", paddingTop: 10 }}>
+                        <TouchableOpacity onPress={() => navigation.navigate("ForgotPass")}>
 
-                            }} />}
-                />
-                <View style={{ alignItems: "flex-end", paddingTop: 10 }}>
-                    <TouchableOpacity onPress={()=> navigation.navigate("ForgotPass")}>
+                            <Text style={{ fontSize: Font.font, color: Colors.purple }}>Forgot Password?</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
 
-                        <Text style={{ fontSize:Font.font, color:Colors.purple }}>Forgot Password?</Text>
+                <BtnComp onPress={handleform} btnStyle={{marginTop:30}} btnText={"LOGIN"} />
+                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
+                    <Text style={{ color: Colors.black, fontSize: Font.font }}>Don't have an account?</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+                        <Text style={{ color: Colors.purple, fontSize: Font.font }}> Sign up</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-
-            <BtnComp onPress={handleform} btnStyle={styles.btn} btnText={"LOGIN"} />
-            <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-                <Text style={{ color:Colors.black, fontSize:Font.font }}>Don't have an account?</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                    <Text style={{ color:Colors.purple, fontSize:Font.font }}> Sign up</Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
+        </View>
 
     );
 };
@@ -129,16 +132,9 @@ const LoginExpert = ({ navigation }) => {
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         margin: 20,
-
+        marginTop:100
     },
-    btn: {
-        marginTop: 30,
-    }
-
 })
-
-
 //make this component available to the app
 export default LoginExpert;

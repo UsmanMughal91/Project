@@ -15,6 +15,8 @@ import { toastConfig } from '../../Styles/styles';
 import Toast from 'react-native-toast-message';
 import Header from '../../Components/Header';
 import Loader from '../../Components/Loader';
+import CustomModal from '../../Components/CustomModal'
+import BaseUrl from '../../baseUrl/BaseUrl';
 
 // create a component
 const AddServices = ({ navigation }) => {
@@ -26,6 +28,7 @@ const AddServices = ({ navigation }) => {
     const [image, setimage] = useState()
     const [localToken, setlocalToken] = useState("")
     const[loading,setloading] = useState('')
+    const [modalvisible, setmodalvisible] = useState(false)
     const pickImage = () => {
         launchImageLibrary({ quality: 0.5 }, (fileobj) => {
             const uploadTask = storage().ref().child(`/service/${Math.floor((Math.random() * 1000000000) + 1)}`).putFile(fileobj.assets[0].uri)
@@ -67,12 +70,14 @@ const AddServices = ({ navigation }) => {
                     }
                 )
             }
-            await fetch('http://192.168.103.8:8000/api/Expert/addservice', option)
+          
+            await fetch(`${BaseUrl.ExpertBaseurl}/addservice`, option)
                 .then(res => res.json())
                 .then((d) => { 
                     if (d.status === "success") {
+                        setmodalvisible(true)
                        
-                        navigation.navigate("SettingP")
+                        // navigation.navigate("ProviderServices")
                     } else {
                         Toast.show({
                             type: 'warning',
@@ -97,11 +102,12 @@ const AddServices = ({ navigation }) => {
         })();
     }, [])
     return (
-        <ScrollView> 
+        <View> 
             <Header onPress={()=>navigation.goBack()}/>
+            <ScrollView>
         <View style={styles.container}>
         
-            <Toast config={toastConfig} />
+          
             <Heading text={"Add Services"} />
 
             <InputText Icon={<MaterialIcons name="design-services" size={25} />}
@@ -120,10 +126,10 @@ const AddServices = ({ navigation }) => {
                 onChangeText={(val) => setServiceDetails(val)}
                 multiline={true} />
 
-            <TouchableOpacity onPress={pickImage} style={{ backgroundColor: 'white', marginTop: 20,borderRadius:12 }}>
+            <TouchableOpacity onPress={pickImage} style={{ backgroundColor: 'white', marginTop: 20,borderRadius:12 ,height:200}}>
                 <Image source={pic ? { uri: pic } :
-                    require('../../assests/images/upload.png')}
-                    resizeMode="cover" style={{ height: 200, width: "100%" }} />
+                    require('../../assests/images/upload1.png')}
+                    resizeMode="center" style={{ height: 200, width: "100%" }} />
 
             </TouchableOpacity>
 
@@ -132,14 +138,19 @@ const AddServices = ({ navigation }) => {
                 btnText={"Add Services"}
                 onPress={handleform} />
         </View>
+            <CustomModal modalvisible={modalvisible} setmodalvisible={setmodalvisible} onPress={() => {
+                setmodalvisible(false);
+                    navigation.navigate("ProviderServices")
+            }} text={"Your Service Added Successfully"} />
         </ScrollView>
+        </View>
     );
 };
 
 // define your styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+     
         margin: 20
     },
     btn: {

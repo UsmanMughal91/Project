@@ -8,6 +8,7 @@ import Header from '../../Components/Header'
 import Loader from '../../Components/Loader';
 import Colors from '../../Styles/Colors';
 import Font from '../../Styles/Font';
+import BaseUrl from '../../baseUrl/BaseUrl';
 // create a component
 const Request = ({ navigation }) => {
     const [data,setdata] = useState("")
@@ -72,7 +73,8 @@ const Request = ({ navigation }) => {
             )
         }
         try {
-            await fetch('http://192.168.103.8:8000/api/Expert/loadRequests',option)
+           
+            await fetch(`${BaseUrl.ExpertBaseurl}/loadRequests`, option)
             .then((res)=>res.json())
             .then((d) => {
                 setdata(d.data);setloading(false)
@@ -83,7 +85,6 @@ const Request = ({ navigation }) => {
         }
     }
     const accept = async (item) => {
-        console.log("ruuuu")
         const option = {
             method: 'POST',
             headers: {
@@ -93,12 +94,13 @@ const Request = ({ navigation }) => {
             body: JSON.stringify(
                 {
                     item:item,
-                    newStatus:"Accepted",
+                    newStatus:"Pending",
                 }
             )
         }
         try {
-            await fetch('http://192.168.103.8:8000/api/Expert/booking',option)
+         
+            await fetch(`${BaseUrl.ExpertBaseurl}/booking`, option)
             .then((res)=>res.json())
             .then((d) => {
                 setrefresh(true)
@@ -124,10 +126,13 @@ const Request = ({ navigation }) => {
                 }
             )
         }
-        try {
-            await fetch('http://192.168.103.8:8000/api/Expert/booking',option)
+        try { 
+           
+            await fetch(`${BaseUrl.ExpertBaseurl}/booking`, option)
             .then((res)=>res.json())
             .then((d) => {
+                setdata(d);
+                setloading(false)
                 setrefresh(true)
             })
             .catch(err => console.log(err))
@@ -142,8 +147,8 @@ const Request = ({ navigation }) => {
         })();
     },[refresh])
     return (
-        <ScrollView>
-            <Header onPress={()=>navigation.goBack()}/>
+        <View style={{flex:1}}>
+            <Header text="no" onPress={()=>navigation.goBack()}/>
         <View style={styles.container}>
             
            <Heading text={"Customer Request"}/>
@@ -183,7 +188,7 @@ const Request = ({ navigation }) => {
 
                 )}} />}
         </View>
-        </ScrollView>
+        </View>
     );
 };
 

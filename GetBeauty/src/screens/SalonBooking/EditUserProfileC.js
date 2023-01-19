@@ -18,6 +18,9 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import Colors from '../../Styles/Colors';
 import Loader from '../../Components/Loader';
 import Font from '../../Styles/Font';
+import BaseUrl from '../../baseUrl/BaseUrl';
+import CustomModal from '../../Components/CustomModal';
+
 // create a component
 const EditUserProfileC = ({ navigation }) => {
     const [name, setname] = useState("")
@@ -28,20 +31,22 @@ const EditUserProfileC = ({ navigation }) => {
     const [about, setabout] = useState("")
     const [localToken, setlocalToken] = useState("")
     const [loading, setloading] = useState(true);
+    const [modalvisible, setmodalvisible] = useState(false)
+
     const pickImage = () => {
         launchImageLibrary({ quality: 0.5 }, (fileobj) => {
-            const uploadTask = storage().ref().child(`/userprofile/${Date.now()}`).putFile(fileobj.assets[0].uri)
+            const uploadTask =  storage().ref().child(`/userprofile/${Math.floor((Math.random() * 1000000000) + 1)}`).putFile(fileobj.assets[0].uri)
             uploadTask.on('state_changed',
                 (snapshot) => {
-
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                   
+                    const progress =  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     if (progress === 100) {
-                        Toast.show({
-                            type: 'done',
-                            position: 'top',
-                            topOffset: 0,
-                            text1: "Image uploaded successfully"
-                        })
+                      Toast.show({
+                          type: 'Done',
+                          position: 'top',
+                          topOffset: 0,
+                          text1: "Image upload Successfully"
+                      })
                     }
 
                 },
@@ -49,26 +54,14 @@ const EditUserProfileC = ({ navigation }) => {
                     alert("error uploading image")
                 },
                 () => {
-                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                         setpic(downloadURL)
                     });
                 }
             );
-
         })
     }
-    // const openPic = () => {
-    //     ImagePicker.openPicker({
-    //         width: 300,
-    //         height: 400,
-    //         cropping: true
-    //     }).then(Response => {
-    //         setpic(Response.path)
-    //         console.log(Response);
 
-    //         picUpload(pic.path)
-    //     });
-    // }
     const [data, setdata] = useState()
     const clearTextInput = () => {
         setname('')
@@ -92,12 +85,15 @@ const EditUserProfileC = ({ navigation }) => {
                     }
                 )
             }
-            await fetch('http://192.168.103.8:8000/api/user/updateProfile', option)
+
+            await fetch(`${BaseUrl.SalonBaseurl}/updateProfile`, option)
+
                 .then(res => res.json())
                 .then((d) => {
                     if (d.status === "success") {
+                        setmodalvisible(true)
                         clearTextInput()
-                        navigation.navigate("UserProfile")
+
                     } else {
                         Toast.show({
                             type: 'warning',
@@ -129,7 +125,8 @@ const EditUserProfileC = ({ navigation }) => {
             )
         }
         try {
-            await fetch('http://192.168.103.8:8000/api/user/loadprofile', option)
+
+            await fetch(`${BaseUrl.SalonBaseurl}/loadprofile`, option)
                 .then((res) => res.json())
                 .then((d) => {
                     setname(d.data.name)
@@ -138,7 +135,7 @@ const EditUserProfileC = ({ navigation }) => {
                     setpic(d.data.pic)
                     setabout(d.data.about)
                     setphone(d.data.phone)
-                    setdata(d.data);setloading(false)
+                    setdata(d.data); setloading(false)
                 })
                 .catch(err => console.log(err))
         } catch (error) {
@@ -153,63 +150,69 @@ const EditUserProfileC = ({ navigation }) => {
         })();
     }, [])
     return (
-        <ScrollView>
+        <View style={{ flex: 1 }}>
             <Header onPress={() => navigation.goBack()} />
             <Toast config={toastConfig} />
-           {loading && <Loader viewStyle={{marginTop:330}}/>}
-           {data && <View style={{ margin: 20 }}>
-              
-                <Heading text={"Edit Profile"} />
+            <ScrollView>
+                {loading && <Loader viewStyle={{ marginTop: 330 }} />}
+                {data && <View style={{ margin: 20 }}>
 
-                <View style={{ marginTop: 10 }}>
-                    <InputText Icon={<Ionicons name="person" size={25} />}
-                        placeholder={"Name"}
-                        value={name}
-                        onChangeText={(val) => setname(val)}
-                        Icons={<FontAwesome5 name="pencil-alt" size={20} />}
-                    />
+                    <Heading text={"Edit Profile"} />
 
-
-                    <InputText Icon={<MaterialCommunityIcons name="phone" size={25} />}
-                        placeholder={"Phone"}
-                        onChangeText={(val) => setphone(val)}
-                        keyboardType="phone-pad"
-                        value={phone}
-                        Icons={<FontAwesome5 name="pencil-alt" size={20} />}
-                    />
+                    <View style={{ marginTop: 10 }}>
+                        <InputText Icon={<Ionicons name="person" size={25} />}
+                            placeholder={"Name"}
+                            value={name}
+                            onChangeText={(val) => setname(val)}
+                            Icons={<FontAwesome5 name="pencil-alt" size={20} />}
+                        />
 
 
-                    <InputText Icon={<MaterialCommunityIcons name="home" size={25} />}
-                        placeholder={"Address"}
-                        onChangeText={(val) => setaddress(val)}
-                        value={address}
-                        Icons={<FontAwesome5 name="pencil-alt" size={20} />}
-                    />
-                    <InputText Icon={<MaterialCommunityIcons name="note" size={25} />}
-                        placeholder={"about"}
-                        onChangeText={(val) => setabout(val)}
-                        value={about}
-                        Icons={<FontAwesome5 name="pencil-alt" size={20} />}
-                        multiline={true}
-                        inputstyle={{ alignItems: 'flex-start' }}
-                        icon={{ paddingTop: 12 }}
-                        icons={{ paddingTop: 12 }}
+                        <InputText Icon={<MaterialCommunityIcons name="phone" size={25} />}
+                            placeholder={"Phone"}
+                            onChangeText={(val) => setphone(val)}
+                            keyboardType="phone-pad"
+                            value={phone}
+                            Icons={<FontAwesome5 name="pencil-alt" size={20} />}
+                        />
+
+
+                        <InputText Icon={<MaterialCommunityIcons name="home" size={25} />}
+                            placeholder={"Address"}
+                            onChangeText={(val) => setaddress(val)}
+                            value={address}
+                            Icons={<FontAwesome5 name="pencil-alt" size={20} />}
+                        />
+                        <InputText Icon={<MaterialCommunityIcons name="note" size={25} />}
+                            placeholder={"about"}
+                            onChangeText={(val) => setabout(val)}
+                            value={about}
+                            Icons={<FontAwesome5 name="pencil-alt" size={20} />}
+                            multiline={true}
+                            inputstyle={{ alignItems: 'flex-start' }}
+                            icon={{ paddingTop: 12 }}
+                            icons={{ paddingTop: 12 }}
+                        />
+                    </View>
+                    <View style={{ alignItems: "center", marginTop: 30 }}>
+                        <TouchableOpacity onPress={pickImage}>
+                            <Image source={{ uri: pic }}
+                                resizeMode="cover" style={{ height: 140, width: 140, borderRadius: 100, backgroundColor: Colors.white }} />
+                        </TouchableOpacity>
+                        <Text style={{ paddingTop: 10, fontSize: Font.h1 }}>Add Pic</Text>
+                    </View>
+                    <BtnComp btnStyle={styles.btn}
+                        btnText={'Update Profile'}
+                        onPress={handleform}
                     />
                 </View>
-                <View style={{ alignItems: "center", marginTop: 30 }}>
-                    <TouchableOpacity onPress={pickImage}>
-                        <Image source={{ uri: pic }}
-                            resizeMode="cover" style={{ height: 140, width: 140, borderRadius: 50, backgroundColor:Colors.white }} />
-                    </TouchableOpacity>
-                    <Text style={{ paddingTop: 10, fontSize:Font.h1 }}>Add Pic</Text>
-                </View>
-                <BtnComp btnStyle={styles.btn}
-                    btnText={'Update Profile'}
-                    onPress={handleform}
-                />
-            </View>
-            } 
-        </ScrollView>
+                }
+                <CustomModal modalvisible={modalvisible} setmodalvisible={setmodalvisible} onPress={() => {
+                    setmodalvisible(false);
+                    navigation.goBack()
+                }} text={"Profile update Successfully"} />
+            </ScrollView>
+        </View>
     );
 };
 

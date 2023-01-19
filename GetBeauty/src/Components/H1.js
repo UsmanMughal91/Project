@@ -6,12 +6,13 @@ import Font from '../Styles/Font';
 
 // create a component
 const H1 = ({
+   PKR,
     text,
     textStyle,
     viewStyle }) => {
     return (
         <View style={{ ...styles.viewStyle, ...viewStyle }}>
-            <Text style={{ ...styles.textStyle, ...textStyle }}>{text}</Text>
+            <Text style={{ ...styles.textStyle, ...textStyle }}>{text}{PKR}</Text>
         </View>
     );
 };

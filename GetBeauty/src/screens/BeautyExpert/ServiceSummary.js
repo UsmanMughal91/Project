@@ -10,8 +10,9 @@ import Font from '../../Styles/Font';
 // create a component
 const ServiceSummary = ({navigation,route}) => {
     const data = route.params.item
+    console.log(route)
     console.log(data)
-    return (
+    return ( 
         <ScrollView>
             <Header onPress={()=>navigation.goBack()}/>
         {data && <View style={styles.container}>
@@ -23,7 +24,7 @@ const ServiceSummary = ({navigation,route}) => {
                         width: 100, height: 100, borderRadius: 50, marginTop: 10
                     }} />
             </View>
-            <H1 text={data.user.name} />
+            <H1 text={data.user.name} viewStyle={{alignSelf:'center'}} />
             <H1 text={"Date & Time"} viewStyle={styles.h1} />
             <View style={{flexDirection:"row",justifyContent:"space-between",marginTop:10}}>
                 <Text style={{fontSize:Font.font}}>Date</Text>
@@ -33,6 +34,11 @@ const ServiceSummary = ({navigation,route}) => {
                     <Text style={{ fontSize: Font.font }}>Time</Text>
                     <Text style={{ fontSize: Font.font }}>{data.time}</Text>
             </View>
+                <H1 text={"Payment"} viewStyle={styles.h11} />
+                <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
+                    <Text style={{ fontSize: Font.font }}>Payment type</Text>
+                    <Text style={{ fontSize: Font.font }}>{data.method}</Text>
+                </View>
             <H1 text={"Amount"} viewStyle={styles.h11} />
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
                     <Text style={{ fontSize: Font.font ,color:Colors.black,}}>Service</Text>
@@ -42,10 +48,10 @@ const ServiceSummary = ({navigation,route}) => {
                     <Text style={{ fontSize: Font.font }}>{data.service.serviceName}</Text>
                     <Text style={{ fontSize: Font.font }}>{data.service.servicePrice} pkr</Text>
             </View>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
-                    <Text style={{ fontSize: Font.font, color: Colors.black, }}>Total</Text>
-                    <Text style={{ fontSize: Font.font, color: Colors.black }}>{data.service.servicePrice} pkr</Text>
-            </View>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
+                    <H1 text={"Total"} viewStyle={styles.h11} />
+                    <H1 text={data.service.servicePrice} PKR={" PKR"} viewStyle={styles.h11} />
+                </View>
         </View>}
         </ScrollView>
     );

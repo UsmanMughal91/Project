@@ -1,6 +1,6 @@
 import React from "react";
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import SalonAppTabs from "./SalonAppTabs";
+import SalonAppTabs from "../Navigations/SalonAppTabs";
 import Colors from "../Styles/Colors";
 import CustomDrawer from "../Components/CustomDrawer"
 const Drawer = createDrawerNavigator();
@@ -12,11 +12,10 @@ const SalonAppDrawer=()=> {
             headerShown:false,
             drawerStyle: {
                 width:"65%",
-                backgroundColor:"white" , 
             },
         }}
             drawerContent={(props) => <CustomDrawer {...props} />}>
-            <Drawer.Screen name=" " component={SalonAppTabs} />
+            <Drawer.Screen name="SalonAppTabs" component={SalonAppTabs} />
         </Drawer.Navigator>
     );
 }

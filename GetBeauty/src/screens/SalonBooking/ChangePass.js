@@ -11,6 +11,8 @@ import { toastConfig } from '../../Styles/styles';
 import Toast from 'react-native-toast-message';
 import { getToken } from '../../../services/AsyncStorage';
 import Header from "../../Components/Header"
+import BaseUrl from '../../baseUrl/BaseUrl';
+import CustomModal from '../../Components/CustomModal';
 // create a component
 const ChangePass = ({ navigation }) => {
 
@@ -22,7 +24,7 @@ const ChangePass = ({ navigation }) => {
     const [visible, setvisible] = useState(true)
     const [show1, setshow1] = useState(false)
     const [visible1, setvisible1] = useState(true)
-
+    const [modalvisible, setmodalvisible] = useState(false)
 
     useEffect(() => {
         (
@@ -60,19 +62,14 @@ const ChangePass = ({ navigation }) => {
                         }
                     )
                 }
-                await fetch('http://192.168.10.8:8000/api/user/changUserPassword', option)
+               
+                await fetch(`${BaseUrl.SalonBaseurl}/changUserPassword`, option)
                     .then(res => res.json())
                     .then(d => {
                         setdata(d)
                         if (d.status === "success") {
-                            // Toast.show({
-                            //     type: 'done',
-                            //     position: 'top',
-                            //     topOffset: 0,
-                            //     text1: d.message
-
-                            // })
-                            alert("Password has been changed")
+                            setmodalvisible(true)
+                           
                             navigation.navigate('Setting')
 
                         } else {
@@ -99,7 +96,7 @@ const ChangePass = ({ navigation }) => {
         }
     }
     return (
-        <View>
+        <View style={{flex:1}}>
             <Header onPress={() => navigation.goBack()} />
             <Toast config={toastConfig} />
             <View style={styles.container}>
@@ -136,6 +133,10 @@ const ChangePass = ({ navigation }) => {
                 <BtnComp btnText={"Change Password"} onPress={handleform} />
 
             </View>
+            <CustomModal modalvisible={modalvisible} setmodalvisible={setmodalvisible} onPress={() => {
+                setmodalvisible(false);
+                navigation.navigate("UserProfile")
+            }} text={"Password changed Successfully"} />
         </View>
     );
 };

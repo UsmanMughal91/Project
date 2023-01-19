@@ -5,6 +5,10 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import transporter from '../config/emailConfig.js'
 import ExpertModel from '../models/Expert.js'
+import Stripe from "stripe"
+
+const stripe = Stripe('sk_test_51MMrrHAhoA10sFoFiGEIJWI3cU6jMpPMSGWyn8cY6xNecwKmGH48OVtq5c7eo3kp7nt8qPXCuNlHKcHZKC7zY1Cw00wmK077Hp')
+
 
 class userController {
     static userRegistration = async (req, res) => {
@@ -190,7 +194,7 @@ class userController {
     }
 
     static loadRequests = async (req, res) => {
-        console.log(req.body)
+        console.log('this is body',req.body)
         const token = req.body.token
         var decrypt = JSON.parse(atob(token.split('.')[1]));
         const user = await UserModel.findById({_id:decrypt.userID })
@@ -230,7 +234,10 @@ class userController {
     static updateprofile = async (req, res) => {
         const data = req.body
         const token = req.body.token
-        var d = JSON.parse(atob(token.split('.')[1]));
+      
+            var d = JSON.parse(atob(token.split('.')[1]));
+     
+       
         try {
             const user = UserModel.findByIdAndUpdate(d.userID,
                 {
@@ -255,6 +262,62 @@ class userController {
         }
     }
 
+
+ static payment = async (req, res) => {
+    // Use an existing Customer ID if this is a returning customer.
+    const {amount,currency} = req.body
+
+    const customer = await stripe.customers.create();
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+        { customer: customer.id },
+        { apiVersion: '2022-11-15' }
+    );
+    const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: currency,
+        customer: customer.id,
+        payment_method_types: ['card']
+            
+        
+    });
+
+    res.json({
+        paymentIntent: paymentIntent.client_secret,
+        ephemeralKey: ephemeralKey.secret,
+        customer: customer.id,
+      
+    });
+};
+    static loaduser = async (req, res) => {
+        console.log('loaduser')
+        const token = req.body.token
+        console.log(token)
+        if(token){
+            var data = JSON.parse(atob(token.split('.')[1]));
+        }
+       
+        if (token) {
+            try {
+                const user = await UserModel.findById(data.userID)
+                if (user) {
+                    res.send({ "status": "success", "data": "user" })
+                } else {
+                    const expert = await ExpertModel.findById(data.userID)
+                    if (expert) {
+                        res.send({ "status": "success", "data": "expert" })
+                    }
+                }
+
+            } catch (error) {
+                console.log(error)
+                res.send({ "status": "failed", "message": "failed to get user" })
+            }
+        }
+
+        else {
+            res.send({ "status": "failed", "message": "failed to get user" })
+        }
+    }
 }
 
 export default userController

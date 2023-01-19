@@ -19,6 +19,10 @@ import ServiceDetail from '../screens/SalonBooking/ServiceDetail';
 import SalonAppDrawer from "../Navigations/SalonAppDrawer";
 import CustomDrawer from '../Components/CustomDrawer';
 import ResetPass from '../screens/SalonBooking/ResetPass';
+import ConfirmBooking from '../screens/SalonBooking/ConfirmBooking';
+import PaymentScreen from '../screens/SalonBooking/PaymentScreen';
+import { getToken } from '../../services/AsyncStorage';
+import { Token } from '@stripe/stripe-react-native';
 
 
 const Stack = createNativeStackNavigator();
@@ -27,20 +31,28 @@ const Stack = createNativeStackNavigator();
 const SalonAppStack = () => {
 
     const [showsplashScreen, setshowsplashScreen] = useState(true);
+    const [name, setname] = useState();
 
     useEffect(() => {
-        setTimeout(() => {
-            setshowsplashScreen(false);
-        }, 1000);
+        (async () => {
+            const token = await getToken() // getting token from storage
+          
+      
+        if (token) {
+            setname("SalonAppStack")
+            // setshowsplashScreen(false)
+        } else {
+            setname("SalonAuthStack")
+            // setshowsplashScreen(false)
+        }
+        })();
     }, [])
-    return (
 
-        <Stack.Navigator initialRouteName='SplashScreen' screenOptions={{ headerShown: false }}>
-            {showsplashScreen ? (<Stack.Screen name="SplashScreen" component={SplashScreen} />)
-                : null}
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="SignUp" component={SignUp} />
-            <Stack.Screen name="SalonAppTabs" component={SalonAppTabs} />
+    
+ if(name)  return (
+        
+        <Stack.Navigator initialRouteName={name} screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="SalonAppDrawer" component={SalonAppDrawer} />
             <Stack.Screen name="Booking" component={Booking} />
             <Stack.Screen name="Services" component={Services} />
             <Stack.Screen name="Location" component={Location} />
@@ -50,14 +62,12 @@ const SalonAppStack = () => {
             <Stack.Screen name="SeeProfile" component={SeeProfile} />
             <Stack.Screen name="Appointment" component={Appointment} />
             <Stack.Screen name="ChangePass" component={ChangePass} />
-            <Stack.Screen name="ForgotPass" component={ForgotPass} />
             <Stack.Screen name="ServiceDetail" component={ServiceDetail} />
             <Stack.Screen name="ResetPass" component={ResetPass} />
-           
-           
-
+            <Stack.Screen name="ConfirmBooking" component={ConfirmBooking} />
+            <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
         </Stack.Navigator>
-
+        
     );
 };
 

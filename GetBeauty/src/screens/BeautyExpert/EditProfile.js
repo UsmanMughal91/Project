@@ -18,6 +18,8 @@ import Loader from '../../Components/Loader';
 import DropDown from '../../Components/DropDown';
 import H1 from '../../Components/H1';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import BaseUrl from '../../baseUrl/BaseUrl';
+import CustomModal from '../../Components/CustomModal';
 let days = [
     { id: 1, name: 'Monday' },
     { id: 2, name: 'Tuesday' },
@@ -40,12 +42,14 @@ const EditProfile = ({ navigation }) => {
     const [loading, setloading] = useState(true)
     const [show, setshow] = useState(false)
     const [show1, setshow1] = useState(false)
-
-
-
-
-
-
+    const [daysX, setDaysX] = useState("")
+    const [daysY, setDaysY] = useState("")
+    const [daysZ, setDaysZ] = useState("")
+    const [timeX, setTimeX] = useState("")
+    const [timeY, setTimeY] = useState("")
+    const [timeZ, setTimeZ] = useState("")
+    const [modalvisible, setmodalvisible] = useState(false)
+    
 
     const pickImage = () => {
         launchImageLibrary({ quality: 0.5 }, (fileobj) => {
@@ -56,7 +60,7 @@ const EditProfile = ({ navigation }) => {
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     if (progress === 100) {
                         Toast.show({
-                            type: 'done',
+                            type: 'Done',
                             position: 'top',
                             topOffset: 0,
                             text1: "Image uploaded successfully"
@@ -109,15 +113,23 @@ const EditProfile = ({ navigation }) => {
                         parlourName: `${parlourName}`,
                         pic: `${pic}`,
                         about: `${about}`,
+                        daysX: `${daysX}`,
+                        daysY: `${daysY}`,
+                        daysZ: `${daysZ}`,
+                        timeX: `${timeX}`,
+                        timeY: `${timeY}`,
+                        timeZ: `${timeZ}`,
                     }
                 )
             }
-            await fetch('http://192.168.103.8:8000/api/Expert/updateProfile', option)
+          
+            await fetch(`${BaseUrl.ExpertBaseurl}/updateProfile`, option)
                 .then(res => res.json())
                 .then((d) => {
                     if (d.status === "success") {
+                        setmodalvisible(true)
                         clearTextInput()
-                        navigation.navigate("SettingP")
+                       
                     } else {
                         Toast.show({
                             type: 'warning',
@@ -149,17 +161,22 @@ const EditProfile = ({ navigation }) => {
             )
         }
         try {
-            await fetch('http://192.168.103.8:8000/api/Expert/loadprofile', option)
+           
+            await fetch(`${BaseUrl.ExpertBaseurl}/loadprofile`, option)
                 .then((res) => res.json())
                 .then((d) => {
-
-
                     setname(d.data.name)
                     setparlourName(d.data.parlourName)
                     setaddress(d.data.address)
                     setpic(d.data.pic)
                     setabout(d.data.about)
                     setphone(d.data.phone)
+                    setDaysX(d.data.daysX)
+                    setDaysY(d.data.daysY)
+                    setDaysZ(d.data.daysZ)
+                    setTimeX(d.data.timeX)
+                    setTimeY(d.data.timeY)
+                    setTimeZ(d.data.timeZ)
                     setdata(d.data)
                         ; setloading(false)
                 })
@@ -177,18 +194,19 @@ const EditProfile = ({ navigation }) => {
     }, [])
     return (
         <View style={{ flex: 1 }}>
+    
             <Header onPress={() => navigation.goBack()} />
             <ScrollView>
                 {loading && <Loader viewStyle={{ marginTop: 320 }} />}
                 {data && <View style={{ flex: 1, margin: 20 }}>
-                    <Toast config={toastConfig} />
+                   
                     <Heading text={"Edit Profile"} />
 
                     <View style={{ marginTop: 10 }}>
                         <InputText Icon={<Ionicons name="person" size={25} />}
                             placeholder={"Name"}
                             value={name}
-                            onChangeText={(val) => setname(val)}
+                            onChangeText={(val) =>{ setname(val)}}
                             Icons={<FontAwesome5 name="pencil-alt" size={20} />}
                         />
 
@@ -228,10 +246,16 @@ const EditProfile = ({ navigation }) => {
                         />
                         <H1 text={"Time schedule"} />
                         <View>
-                            <InputText placeholder={"Monday to thursday"}
-                                Icons={<FontAwesome5 name="pencil-alt" size={20} />} />
+                            <InputText 
+                                placeholder={"Monday to thursday"}
+                                Icons={<FontAwesome5 name="pencil-alt" size={20} />} 
+                                onChangeText={(val)=>{setDaysX(val)}}
+                                value = {daysX}
+                                />
                             <InputText placeholder={"08:00 am to 10:00 pm"}
                                 Icons={<FontAwesome5 name="pencil-alt" size={20} />}
+                                onChangeText={(val)=>{setTimeX(val)}}
+                                value = {timeX}
                             />
                         </View>
                         <View style={{ backgroundColor: 'white', marginTop: 20, alignSelf: 'center', borderRadius: 12 }}>
@@ -239,9 +263,14 @@ const EditProfile = ({ navigation }) => {
                         </View>
                         {show && <View>
                             <InputText placeholder={"Monday to thursday"}
-                                Icons={<FontAwesome5 name="pencil-alt" size={20} />} />
+                                Icons={<FontAwesome5 name="pencil-alt" size={20} />} 
+                                onChangeText={(val)=>{setDaysY(val)}}
+                                value = {daysY}
+                                />
                             <InputText placeholder={"08:00 am to 10:00 pm"}
-                                Icons={<FontAwesome5 name="pencil-alt" size={20} />} />
+                                Icons={<FontAwesome5 name="pencil-alt" size={20} />} 
+                                onChangeText={(val)=>{setTimeY(val)}}
+                                value = {timeY}/>
                             <View style={{ backgroundColor: 'white', marginTop: 20, alignSelf: 'center', borderRadius: 12 }}>
                                 <AntDesign name={show1 === false ? 'plus' : "minus"} size={30} onPress={() => setshow1(!show1)} />
                             </View>
@@ -249,9 +278,14 @@ const EditProfile = ({ navigation }) => {
 
                         {show1 && <View>
                             <InputText placeholder={"Monday to thursday"}
-                                Icons={<FontAwesome5 name="pencil-alt" size={20} />} />
+                                Icons={<FontAwesome5 name="pencil-alt" size={20} />} 
+                                onChangeText={(val)=>{setDaysZ(val)}}
+                                value = {daysZ}
+                                />
                             <InputText placeholder={"08:00 am to 10:00 pm"}
-                                Icons={<FontAwesome5 name="pencil-alt" size={20} />} />
+                                Icons={<FontAwesome5 name="pencil-alt" size={20} />} 
+                                onChangeText={(val)=>{setTimeZ(val)}}
+                                value = {timeZ}/>
                         </View>}
 
 
@@ -269,9 +303,15 @@ const EditProfile = ({ navigation }) => {
                         onPress={handleform}
                     />
 
-
+                    <View>
+                       
+                    </View>
                 </View>
                 }
+                <CustomModal modalvisible={modalvisible} setmodalvisible={setmodalvisible} onPress={() => {
+                    setmodalvisible(false);
+                    navigation.navigate("Profile")
+                }} text={"Profile update Successfully"} />
             </ScrollView>
         </View>
     );

@@ -9,6 +9,7 @@ import Setting from '../screens/SalonBooking/Setting'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Appointment from '../screens/SalonBooking/Appointment';
 import UserProfile from "../screens/SalonBooking/UserProfile"
+import Colors from '../Styles/Colors';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -17,21 +18,23 @@ const SalonAppTabs = () => {
     return (
      
         <BottomTab.Navigator initialRouteName='ParlorList' screenOptions={{
-            tabBarInactiveBackgroundColor: "#9932cc",
-            tabBarActiveBackgroundColor: "#7a28a3",
-            tabBarInactiveTintColor: "white",
-            tabBarActiveTintColor: "white",
-            tabBarIconStyle: { marginTop: 4 },
-            tabBarLabelStyle: { fontSize: 12, color: 'white', paddingBottom: 3 },
-            tabBarStyle: { height: 50, position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 4, borderTopRightRadius: 12,},
-            style: { borderColor: '#011f3b'},
             headerShown: false,
-            unmountOnBlur: true,
+            tabBarLabelStyle: { fontSize: 12, color: 'white', paddingBottom: 3 },
+            // tabBarInactiveBackgroundColor: "#9932cc",
+            tabBarBackgroundRadius: 20,
+            tabBarActiveBackgroundColor: "#7a28a3",
+            tabBarIconStyle: { marginTop: 4 },
+            tabBarStyle: {
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+                height: 50,
+                backgroundColor: Colors.purple
+            }
         }}>
                 <BottomTab.Screen name='ParlorList' component={ParlorList}
                     options={{   
                     tabBarLabel: "Home",
-                    tabBarIcon:({color,size})=>(
+                    tabBarIcon:({color,size,focused})=>(
                         <MaterialIcons name="home" size={25} style={{marginTop:1}} color={"white"}/>
                     ),
                           }} />

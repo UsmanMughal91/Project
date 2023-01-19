@@ -10,7 +10,6 @@ import Toast from 'react-native-toast-message';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 // create a component
 const ResetPass = ({ navigation }) => {
-
     const [password, setpassword] = useState('')
     const [password_confirmation, setpassword_confirmation] = useState('')
     const [data, setdata] = useState('')

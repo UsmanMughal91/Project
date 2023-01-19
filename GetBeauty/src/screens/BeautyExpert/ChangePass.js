@@ -11,7 +11,8 @@ import { toastConfig } from '../../Styles/styles';
 import Toast from 'react-native-toast-message';
 import { getToken } from '../../../services/AsyncStorage';
 import Header from '../../Components/Header';
-
+import BaseUrl from '../../baseUrl/BaseUrl';
+import CustomModal from '../../Components/CustomModal';
 // create a component
 const ChangePass = ({ navigation }) => {
 
@@ -23,6 +24,7 @@ const ChangePass = ({ navigation }) => {
     const [visible, setvisible] = useState(true)
     const [show1, setshow1] = useState(false)
     const [visible1, setvisible1] = useState(true)
+    const [modalvisible, setmodalvisible] = useState(false)
 
 
     useEffect(() => {
@@ -60,21 +62,17 @@ const ChangePass = ({ navigation }) => {
                         }
                     )
                 }
-                await fetch('http://192.168.10.8:8000/api/Expert/changUserPassword', option)
+           
+                await fetch(`${BaseUrl.ExpertBaseurl}/changUserPassword`, option)
                     .then(res => res.json())
-                    .then(d => setdata(d))
+                    .then(data => setdata(data))
                     .catch(err => console.log(err))
 
 
                 if (data.status === "success") {
-                    Toast.show({
-                        type: 'done',
-                        position: 'top',
-                        topOffset: 0,
-                        text1: data.message
-
-                    })
-                    navigation.navigate('SettingP')
+                    setmodalvisible(true)
+                   
+                    // navigation.navigate('SettingP')
                     // await storeToken(data.token)  // store token in storage 
                     await clearTextInput()
                     // navigation.navigate("SalonAppTabs")
@@ -139,6 +137,11 @@ const ChangePass = ({ navigation }) => {
             </View>
             <BtnComp btnText={"Change Password"} onPress={handleform} />
             </View>
+            <CustomModal modalvisible={modalvisible} setmodalvisible={setmodalvisible} onPress={() => {
+                setmodalvisible(false);
+                navigation.goBack()
+            }} text={"Password changed Successfully"} />
+       
         </View>
     );
 };

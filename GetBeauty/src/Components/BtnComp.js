@@ -10,14 +10,18 @@ const BtnComp = ({
     btnStyle,
     onPress,
     btnTextS,
-    isDisable = false, 
+    isDisable = false,
+    disabled = false 
 }) => {
     return (
         <View>
-            <TouchableOpacity style={{...styles.btnStyle,...btnStyle}}
-            disabled={isDisable} 
+            <TouchableOpacity style={{...styles.btnStyle,
+            backgroundColor: disabled? "grey" : Colors.purple
+            ,...btnStyle}}
+            // disabled={isDisable} 
             onPress={onPress}
             activeOpacity={0.6}
+            disabled={disabled}
             >
             
                 <Text style={{...styles.btnTextS,...btnTextS}}>{btnText}</Text>
@@ -30,7 +34,7 @@ const BtnComp = ({
 // define your styles
 const styles = StyleSheet.create({
     btnStyle: { 
-        backgroundColor: Colors.purple,
+        // backgroundColor: disabled ? Colors.grey : Colors.purple,
         borderRadius: 12,
         padding: 5,
         

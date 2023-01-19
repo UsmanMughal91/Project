@@ -11,12 +11,39 @@ import BtnComp from '../../Components/BtnComp';
 // create a component
 const CompleteOrder = ({ navigation, route }) => {
     const data = route.params.item
+    const setrefresh = route.params.setrefresh
     console.log(data)
+    const complete = async (item) => {
+        const option = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                {
+                    item: item,
+                    newStatus: "Completed",
+                }
+            )
+        }
+        try {
+        
+            await fetch(`${BaseUrl.ExpertBaseurl}/booking`, option)
+                .then((res) => res.json())
+                .then((d) => {
+                    setrefresh(true)
+                    navigation.navigate("Appointment")
+                })
+                .catch(err => console.log(err))
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <ScrollView>
             <Header onPress={() => navigation.goBack()} />
             {data && <View style={styles.container}>
-
                 <Heading text={"Status"} />
                 <View style={{ alignItems: 'center', marginTop: 20 }}>
                     <Image source={{ uri: data.user.pic }}
@@ -45,11 +72,10 @@ const CompleteOrder = ({ navigation, route }) => {
                 </View>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
                     <Text style={{ fontSize: Font.h1, color: Colors.black, fontWeight: "600" }}>Total</Text>
-                    <Text style={{ fontSize: Font.h1, color: Colors.black ,fontWeight:"600"}}>{data.service.servicePrice} pkr</Text>
+                    <Text style={{ fontSize: Font.h1, color: Colors.black, fontWeight: "600" }}>{data.service.servicePrice} pkr</Text>
                 </View>
-                <View style={{flexDirection:'row',justifyContent:"space-around",marginTop:60}}>
-                    <BtnComp btnText={"Completed"} btnStyle={{width:130}} onPress={()=>navigation.navigate("Appointment")}/>
-                  
+                <View style={{ flexDirection: 'row', justifyContent: "space-around", marginTop: 60 }}>
+                    <BtnComp btnText={"Complete"} btnStyle={{ width: 130 }} onPress={() => complete(data)} />
                 </View>
             </View>}
         </ScrollView>

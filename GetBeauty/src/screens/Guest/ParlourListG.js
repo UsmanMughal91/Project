@@ -1,15 +1,20 @@
 //import liraries
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Button, ImageBackground, TextInput, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Modal, ImageBackground, TextInput, Dimensions, Alert, Button } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Heading from '../../Components/Heading';
-
+import { StripeProvider } from '@stripe/stripe-react-native';
 import Colors from '../../Styles/Colors';
+import { SP_KEY } from '@env'
+import PaymentScreen from '../SalonBooking/PaymentScreen';
+import LineChartC from '../../Components/LineChartC';
+import CustomModal from '../../Components/CustomModal';
 
 
 // create a component
 
 const ParlorListG = ({ navigation }) => {
+
     const DATA = [
         {
             id: 1,
@@ -61,7 +66,6 @@ const ParlorListG = ({ navigation }) => {
         }
     ]
 
-
     return (
 
 
@@ -94,6 +98,25 @@ const ParlorListG = ({ navigation }) => {
 
             </ImageBackground>
             <ScrollView style={{ margin: 20 }}>
+                <StripeProvider
+                    publishableKey={SP_KEY}
+                    merchantIdentifier="merchant.identifier" // required for Apple Pay
+                    urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
+                >
+                   
+                </StripeProvider>
+
+
+
+                <View>
+                            <CustomModal />
+
+
+                   
+                </View>
+
+                <LineChartC/>
+           
                 <Text style={{ fontSize: 30, color: "black", fontWeight: "600" }}>Choose Parlour</Text>
 
               
@@ -128,9 +151,10 @@ const ParlorListG = ({ navigation }) => {
                         </View>
 
                     )} />
-            </ScrollView>
+              
+            </ScrollView >
 
-        </View>
+        </View >
 
     );
 }

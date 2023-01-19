@@ -21,10 +21,10 @@ const RegisterOption = ({navigation}) => {
                       <View style={{flexDirection:"row",justifyContent:'center',justifyContent:"space-around"}}>
 
                         <View style={{ width: "46%" }}>
-                                <BtnComp btnText={"Salon Booking"} onPress={() => navigation.navigate('SalonAppStack')} btnStyle={styles.btn} />
+                                <BtnComp btnText={"Salon Booking"} onPress={() => navigation.navigate('SalonAuthStack')} btnStyle={styles.btn} />
                         </View>
                         <View style={{ width: "46%" }} >
-                                <BtnComp btnText={"Beauty Expert"} onPress={() => navigation.navigate("BeautyExpertStack")} btnStyle={styles.btn} />
+                                <BtnComp btnText={"Beauty Expert"} onPress={() => navigation.navigate("ExpertAuthStack")} btnStyle={styles.btn} />
                         </View>
                       </View>
                            

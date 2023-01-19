@@ -1,17 +1,22 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet,Image } from 'react-native';
+import { View, Text, StyleSheet,Image, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Heading from '../../Components/Heading'
 import BtnComp from '../../Components/BtnComp';
+import Header from '../../Components/Header';
 // create a component
 const ServiceDetail= ({navigation,route}) => {
     const item = route.params.item
+    const profile = route.params.profile
+    console.log(profile)
+ 
     return (
+<View style={{flex:1}}> 
+    <Header onPress={()=>navigation.goBack()}/>
+    <ScrollView> 
         <View style={styles.container}>
-            <View style={{ width: 40 }}>
-                <Ionicons name='md-chevron-back-circle-outline' size={40} color={'black'} onPress={() => navigation.goBack()} />
-            </View>
+          
             <Heading text={"About Service"} />
             <Image source={{uri:item.pic}}
            style={{height:200,width:"100%",borderRadius:12,marginTop:20}} />
@@ -23,15 +28,16 @@ const ServiceDetail= ({navigation,route}) => {
             <Text style={{ fontSize: 16, textAlign: 'justify',marginTop:10 }}>
                {item.servicePrice} Pkr
             </Text>
-            <BtnComp btnText={"Book Service"} btnStyle={styles.btn} onPress={()=>navigation.navigate('Booking',{item})}/>
+                    <BtnComp btnText={"Book Service"} btnStyle={styles.btn} onPress={() => navigation.navigate('Booking', { item, profile })}/>
+        </View>
+            </ScrollView>
         </View>
     );
 };
 
 // define your styles
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+    container: { 
        margin:20
     },
     btn:{

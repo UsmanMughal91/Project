@@ -18,25 +18,40 @@ import ExpertSplash from "../screens/ExpertSplash"
 import CompleteOrder from '../screens/BeautyExpert/CompleteOrder';
 import ForgotPass from '../screens/BeautyExpert/ForgotPass';
 import ResetPass from '../screens/BeautyExpert/ResetPass';
+import OTP from '../screens/BeautyExpert/Otp';
+import OtpChangePass from '../screens/BeautyExpert/OtpChangePassword';
+import DashBoard from '../screens/BeautyExpert/DashBoard';
+import EarningHistory from '../screens/BeautyExpert/EarningHistory';
+import ExpertDrawer from '../Navigations/ExpertDrawer'
+import { getToken } from '../../services/AsyncStorage';
+
+
 const Stack = createNativeStackNavigator();
 // create a component
 const BeautyExpertStack = () => {
 
     const [showsplashScreen, setshowsplashScreen] = useState(true);
+    const [name, setname] = useState();
 
     useEffect(() => {
-        setTimeout(() => {
-            setshowsplashScreen(false);
-        }, 1000);
+        (async () => {
+            const token = await getToken() // getting token from storage
+          
+      if(token){
+          setname("BeautyExpertStack")
+        //   setshowsplashScreen(false)
+      }else{
+          setname("ExpertAuthStack")
+        //   setshowsplashScreen(false)
+      }
+        })();
     }, [])
-    return (
 
-        <Stack.Navigator initialRouteName='ExpertSplash' screenOptions={{ headerShown: false }}>
-            {showsplashScreen ? (<Stack.Screen name="ExpertSplash" component={ExpertSplash} />)
-                : null}
-            <Stack.Screen name="LoginExpert" component={LoginExpert} />
-            <Stack.Screen name="SignUp" component={SignUp} />
-            <Stack.Screen name="BeautyExpertTabs" component={BeautyExpertTabs} />
+    
+ if(name)   return (
+
+        <Stack.Navigator initialRouteName={name} screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="ExpertDrawer" component={ExpertDrawer} />
             <Stack.Screen name="ProviderServices" component={ProviderServices} />
             <Stack.Screen name="AddServices" component={AddServices} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
@@ -45,12 +60,16 @@ const BeautyExpertStack = () => {
             <Stack.Screen name="Appointment" component={Appointment} />
             <Stack.Screen name="Request" component={Request} />
             <Stack.Screen name="ChangePass" component={ChangePass} />
+            <Stack.Screen name="OtpChangePass" component={OtpChangePass} />
+            <Stack.Screen name="OTP" component={OTP} />
             <Stack.Screen name="ServiceDetail" component={ServiceDetail} />
             <Stack.Screen name="ServiceSummary" component={ServiceSummary} />
             <Stack.Screen name="CompleteOrder" component={CompleteOrder} />
-            <Stack.Screen name="ForgotPass" component={ForgotPass} />
             <Stack.Screen name="ResetPass" component={ResetPass} />
-           
+            <Stack.Screen name="EarningHistory" component={EarningHistory} />
+            <Stack.Screen name="DashBoard" component={DashBoard} />
+         
+
         </Stack.Navigator>
     )
 };

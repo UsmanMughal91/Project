@@ -6,15 +6,20 @@ import Heading from '../../Components/Heading';
 import Colors from '../../Styles/Colors';
 import Font from '../../Styles/Font';
 import Entypo from 'react-native-vector-icons/Entypo'
+import BaseUrl from '../../baseUrl/BaseUrl';
+import Loader from '../../Components/Loader';
+
 // create a component
 
 const ParlorList = ({ navigation }) => {
     const [data, setdata] = useState()
+    const [loading, setloading] = useState(true)
     const getlist = async () => {
         try {
-            await fetch('http://192.168.103.8:8000/api/Expert/getlist')
+           
+            await fetch(`${BaseUrl.ExpertBaseurl}/getlist`)
                 .then(res => res.json())
-                .then(d => { setdata(d.data) })
+                .then(d => { setdata(d.data),setloading(false) })
                 .catch(err => console.log(err))
         } catch (error) {
             console.log(error)
@@ -24,67 +29,16 @@ const ParlorList = ({ navigation }) => {
         getlist()
         console.log(data)
     }, [])
-    const DATA = [
-        {
-            id: 1,
-            PName: "New Beauty Parlour",
-            name: 'Ayesha',
-            images: require('../../assests/images/a.jpg'),
-        },
-        {
-            id: 2,
-            PName: "Shine Beauty Salon",
-            name: 'Zoya',
-            images: require('../../assests/images/b.jpg'),
-        },
-        {
-            id: 3,
-            PName: "Star Salon",
-            name: 'Sana',
-            images: require('../../assests/images/c.jpg'),
-        },
-        {
-            id: 4,
-            PName: "Child Beauty Parlour",
-            name: 'Mehak ',
-            images: require('../../assests/images/d.jpg'),
-        },
-        {
-            id: 5,
-            PName: "New Beauty Parlour",
-            name: 'Ayesha',
-            images: require('../../assests/images/a.jpg'),
-        },
-        {
-            id: 6,
-            PName: "Shine Beauty Salon",
-            name: 'Zoya',
-            images: require('../../assests/images/b.jpg'),
-        },
-        {
-            id: 7,
-            PName: "Star Salon",
-            name: 'Sana',
-            images: require('../../assests/images/c.jpg'),
-        },
-        {
-            id: 8,
-            PName: "Child Beauty Parlour",
-            name: 'Mehak ',
-            images: require('../../assests/images/d.jpg'),
-        }
-    ]
+   
     return (
 
 
         <View style={styles.container}>
-
-
             <ImageBackground source={require('../../assests/images/beauty.jpg')}
                 style={{ width: "100%", height: 250 }}>
                     <View style={{backgroundColor:Colors.white,alignSelf:'flex-start',marginTop:20,marginLeft:20 ,borderRadius:12,padding:5}}>
-                    <TouchableOpacity onPress={() => navigation.navigate("CustomDrawer")}>
-                    <FontAwesome name='navicon' size={25} color={"black"} />
+                    <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                    <FontAwesome name='navicon' size={20} color={"black"} />
                         </TouchableOpacity>
                     </View>
                
@@ -99,34 +53,37 @@ const ParlorList = ({ navigation }) => {
                    
                 </View>
             </ImageBackground>
-            <ScrollView style={{ margin: 20 }}>
+            <ScrollView style={{ margin: 20 }} nestedScrollEnabled>
                 <Heading text={"Choose Parlour"}/>
+                <View> 
+                {loading && <Loader viewStyle={{marginTop:180}}/>}
                 {data &&   <FlatList
                     data={data}
                     keyExtractor={data => data._id}
                     renderItem={({ item }) => (
-                        <View style={{ flex: 1, }}>
-                            <TouchableOpacity onPress={() => navigation.navigate('SeeProfile', { item })}>
+                        <View >
+                            <View >
                                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 15, marginBottom: 15 }}>
-                                    <View>
+                                    <TouchableOpacity >
                                         <Image source={{uri:item.pic}}
                                             style={{ borderRadius: 40, width: 50, height: 50 }}
                                         />
-                                    </View>
-                                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <View style={{ marginLeft: 10, width: "69%" }}>
+                                    </TouchableOpacity>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <TouchableOpacity onPress={() => navigation.navigate('SeeProfile', { item })} style={{ marginLeft: 10, width: "80%"}}>
                                             <Text style={{ color: 'black', fontSize: 20 }}>{item.parlourName}</Text>
                                             <Text>{item.name}</Text>
-                                        </View>
+                                        </TouchableOpacity>
                                     </View>
                                     <View>
                                     </View>
                                 </View>
-                            </TouchableOpacity>
+                            </View>
                         </View>
 
 
                     )} />}
+                </View>
             </ScrollView>
 
         </View>
